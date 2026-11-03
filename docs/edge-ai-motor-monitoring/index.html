@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
@@ -312,14 +312,14 @@ footer{padding-top:var(--s-5);border-top:1px solid var(--rule);font-size:12.5px;
   <div class="cmd"><button class="btn" id="copyBtn" type="button">Copy</button><span id="cmdText"></span></div>
 </section>
 
-<footer><span id="fLeft">YOUR NAME · Machine Learning &amp; Edge AI</span><span>Single-file page · data from results/model_comparison.csv</span></footer>
+<footer><span id="fLeft">Heet Gadhiya · Machine Learning &amp; Edge AI</span><span>Single-file page · data from results/model_comparison.csv</span></footer>
 </div>
 <div class="tip" id="tip" hidden></div>
 
 <script>
 /* ======================= CONFIG (overridden by viz_data.json when present) ======================= */
 const CONFIG = {
-  repoUrl: "https://github.com/Heet4226/edge-ai-for-anomaly-detection",
+  repoUrl: "https://github.com/heet4226/edge-ai-for-anomaly-detection",
   branch: "main",
   projectPath: "projects/edge-ai-motor-monitoring",
   facts: [["60","recording sessions"],["239 k","feature vectors"],["14","features computed on the MCU"],["22","models benchmarked"],["20","deployed on the STM32"],["97.1%","best test score, unseen data"]],
@@ -360,7 +360,7 @@ const CONFIG = {
     ["  tools/build_readme_visuals.py","regenerates every README chart from the CSV"],
     ["docs/edge-ai-motor-monitoring/","this page and the firmware map (GitHub Pages)"]
   ],
-  reproduce: "git clone https://github.com/Heet4226/edge-ai-for-anomaly-detection.git\ncd edge-ai-for-anomaly-detection/projects/edge-ai-motor-monitoring\npip install -r requirements.txt\njupyter lab models/19_mlp_hybrid/mlp_hybrid.ipynb   # needs recordings in data/, see data/README.md"
+  reproduce: "git clone https://github.com/heet4226/edge-ai-for-anomaly-detection.git\ncd edge-ai-for-anomaly-detection/projects/edge-ai-motor-monitoring\npip install -r requirements.txt\njupyter lab models/19_mlp_hybrid/mlp_hybrid.ipynb   # needs recordings in data/, see data/README.md"
 };
 
 function init(){

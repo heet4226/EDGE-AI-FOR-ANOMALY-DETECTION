@@ -1,9 +1,9 @@
-﻿{
+{
   "title": "Edge AI Motor Condition Monitoring on STM32",
-  "repo_url": "https://github.com/Heet4226/edge-ai-for-anomaly-detection",
+  "repo_url": "https://github.com/heet4226/edge-ai-for-anomaly-detection",
   "branch": "main",
   "project_path": "projects/edge-ai-motor-monitoring",
-  "pages_url": "https://Heet4226.github.io/edge-ai-for-anomaly-detection/edge-ai-motor-monitoring/",
+  "pages_url": "https://heet4226.github.io/edge-ai-for-anomaly-detection/edge-ai-motor-monitoring/",
   "pages_dir": "../../docs/edge-ai-motor-monitoring",
   "results_csv": "results/model_comparison.csv",
   "metric": {

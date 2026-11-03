@@ -1,4 +1,4 @@
-﻿#!/usr/bin/env python3
+#!/usr/bin/env python3
 """
 Build the clickable, animated visuals shown in this project's README.
 
@@ -23,7 +23,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 CFG = json.loads((ROOT / "tools" / "viz_config.json").read_text(encoding="utf-8"))
 OUT = ROOT / "assets" / "viz"
-for sub in ("rows", "cards"):
+for sub in ("rows", "cards", "model_cards"):
     (OUT / sub).mkdir(parents=True, exist_ok=True)
 
 THEMES = {  # GitHub's own page colours, so the images blend into the README
@@ -253,6 +253,70 @@ def card(slug, title, big, unit, detail, color, theme, w=290, h=108):
     write(f"cards/{slug}-{theme}.svg", "\n".join(s))
 
 
+
+# ---------------------------------------------------------------- per-model "at a glance" chart
+def model_glance(m, theme):
+    """Two panels from the results table: scores on unseen recordings vs. the best model and the median,
+    and where this model sits among all deployed models on the MCU (log scale)."""
+    t = THEMES[theme]; ci = t["i"]; col = FAM[m["fam"]]["color"][ci]
+    W, H = 880, 250
+    s = [f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {W} {H}" width="{W}" height="{H}">', style(t),
+         f'<rect x=".5" y=".5" width="{W-1}" height="{H-1}" rx="10" fill="{t["panel"]}" stroke="{t["rule"]}"/>']
+    # panel A
+    s.append(f'<text x="20" y="28" class="m t3" font-size="11" letter-spacing="1">ON 7 UNSEEN TEST RECORDINGS</text>')
+    rows = [("Test score", "test_score", False), ("Fault detection", "detection", False), ("No false alarm", "false_alarm", True), ("Class accuracy", "class_acc", False)]
+    def val(mm, key, inv):
+        v = mm.get(key)
+        return None if v is None else (100 - v if inv else v)
+    x0, bw_max, y = 140, 250, 52
+    for lab, key, inv in rows:
+        v = val(m, key, inv)
+        allv = sorted(x for x in (val(o, key, inv) for o in models) if x is not None)
+        s.append(f'<text x="20" y="{y+12}" class="s t2" font-size="12.5">{lab}</text>'
+                 f'<rect x="{x0}" y="{y+2}" width="{bw_max}" height="13" rx="3" fill="{t["track"]}"/>')
+        if v is None:
+            s.append(f'<text x="{x0+8}" y="{y+13}" class="m t3" font-size="11">not applicable for this model type</text>')
+        else:
+            s.append(f'<rect x="{x0}" y="{y+2}" width="{bw_max*v/100:.1f}" height="13" rx="3" fill="{col}"/>'
+                     f'<text x="{x0+bw_max+8}" y="{y+13}" class="m t" font-size="11.5" font-weight="600">{v:.1f}%</text>')
+            med = allv[len(allv)//2]; bv = val(best, key, inv)
+            for xv, c in ((med, t["ink3"]), (bv, t["ink"])):
+                if xv is not None:
+                    s.append(f'<line x1="{x0+bw_max*xv/100:.1f}" x2="{x0+bw_max*xv/100:.1f}" y1="{y-1}" y2="{y+18}" stroke="{c}" stroke-width="2"/>')
+        y += 34
+    s.append(f'<line x1="20" x2="32" y1="{y+6}" y2="{y+6}" stroke="{t["ink"]}" stroke-width="2"/><text x="38" y="{y+10}" class="s t3" font-size="11">best model</text>'
+             f'<line x1="120" x2="132" y1="{y+6}" y2="{y+6}" stroke="{t["ink3"]}" stroke-width="2"/><text x="138" y="{y+10}" class="s t3" font-size="11">median of all 22</text>')
+    # panel B
+    bx = 470
+    s.append(f'<line x1="{bx-16}" x2="{bx-16}" y1="18" y2="{H-18}" stroke="{t["rule"]}"/>'
+             f'<text x="{bx}" y="28" class="m t3" font-size="11" letter-spacing="1">ON THE STM32H573 · VS. ALL DEPLOYED MODELS</text>')
+    if not m["deployed"]:
+        s.append(f'<text x="{bx}" y="80" class="s t" font-size="15" font-weight="600">Not deployable on the microcontroller</text>'
+                 f'<text x="{bx}" y="104" class="s t2" font-size="12.5">X-CUBE-AI could not convert this model type,</text>'
+                 f'<text x="{bx}" y="122" class="s t2" font-size="12.5">so it was evaluated offline only.</text>')
+    else:
+        dep = [o for o in models if o["deployed"]]
+        y = 56; sx0, sw = bx + 92, 270
+        for lab, key, unit, word in (("Inference", "infer_ms", "ms", "fastest"), ("Flash", "flash_kib", "KiB", "smallest"), ("RAM", "ram_kib", "KiB", "smallest")):
+            vals = [o[key] for o in dep if o.get(key)]
+            lo, hi = math.log10(min(vals)) - 0.1, math.log10(max(vals)) + 0.1
+            X = lambda v: sx0 + sw * (math.log10(v) - lo) / (hi - lo)
+            s.append(f'<text x="{bx}" y="{y+5}" class="s t2" font-size="12.5">{lab}</text>'
+                     f'<line x1="{sx0}" x2="{sx0+sw}" y1="{y}" y2="{y}" stroke="{t["rule"]}"/>')
+            for o in dep:
+                if o.get(key) and o is not m:
+                    s.append(f'<circle cx="{X(o[key]):.1f}" cy="{y}" r="4" fill="{t["ink3"]}" opacity=".45"/>')
+            v = m.get(key)
+            if v:
+                rank = sorted(vals).index(v) + 1
+                s.append(f'<circle cx="{X(v):.1f}" cy="{y}" r="7" fill="{col}" stroke="{t["panel"]}" stroke-width="2"/>'
+                         f'<text x="{X(v):.1f}" y="{y-12}" text-anchor="middle" class="m t" font-size="11" font-weight="600">{v:g} {unit}</text>'
+                         f'<text x="{bx}" y="{y+20}" class="m t3" font-size="10.5">#{rank} {word} of {len(vals)}</text>')
+            y += 56
+        s.append(f'<text x="{sx0}" y="{H-14}" class="m t3" font-size="10.5">← smaller / faster · log scale · larger / slower →</text>')
+    s.append("</svg>")
+    write(f"model_cards/{m['id']:02d}-{theme}.svg", "\n".join(s))
+
 # ---------------------------------------------------------------- per-model README
 def fmt_field(m, key, f):
     v = m.get(key)
@@ -281,11 +345,15 @@ def model_readme(m):
          pic(f"{depth}assets/viz/rows/{m['id']:02d}", f"{m['name']} result"), "",
          "| " + " | ".join(l for l, _ in fields) + " |", "|" + "---:|" * len(fields), "| " + " | ".join(v for _, v in fields) + " |", ""]
     if CFG.get("baseline_note"): L += [f"<sub>{CFG['baseline_note']}</sub>", ""]
+    L += ["### At a glance", "", pic(f"{depth}assets/viz/model_cards/{m['id']:02d}", f"{m['name']}: scores on unseen recordings and footprint on the STM32", "100%"), ""]
     if m["settings"]: L += [f"**Model:** {m['settings']}", ""]
     if m["note"]: L += [f"> {m['note']}", ""]
     if code: L += ["### Code", ""] + [f"- [`{p.name}`]({p.name})" for p in code] + [""]
     if figs:
-        L += ["### Results", ""]
+        L += ["### Results from the notebook", "",
+              "<sub>Cross-validation and training plots, plus the notebook's manual test. The manual test plots one example recording "
+              "at a time (picked in a file dialog), so they show a single condition, often the thermal-fault recording. "
+              "Scores across all 7 test recordings are in the chart above.</sub>", ""]
         L += [f'<a href="figures/{p.name}"><img src="figures/{p.name}" width="49%" alt="{m["name"]} result plot {k+1}"></a>' for k, p in enumerate(figs[:6])]
         if len(figs) > 6:
             L += ["", "<details><summary>More plots (" + str(len(figs) - 6) + ")</summary>", ""]
@@ -377,7 +445,7 @@ if __name__ == "__main__":
     for th, t in THEMES.items():
         ci = t["i"]
         pipeline(th); lb_head(th)
-        for m in models: lb_row(m, th)
+        for m in models: lb_row(m, th); model_glance(m, th)
         for k, g in enumerate(CFG["data_cards"]):
             card(f"data{k}", g["name"], g["big"], g["unit"], g["detail"], g["color"][ci], th)
         for k, o in enumerate(outs):

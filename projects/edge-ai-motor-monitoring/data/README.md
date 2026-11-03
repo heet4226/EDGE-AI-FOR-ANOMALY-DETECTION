@@ -1,4 +1,4 @@
-﻿# Dataset
+# Dataset
 
 The raw recordings are **not published**. This page describes the data so that the code and results can be understood, and so that a compatible dataset can be recorded. Only aggregate statistics are shared (`../results/dataset_stats.json`).
 

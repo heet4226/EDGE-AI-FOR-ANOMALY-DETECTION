@@ -1,6 +1,6 @@
 ﻿# Machine Learning & Edge AI Portfolio
 
-**Heet Gadhiya** · Machine learning and embedded AI engineer
+**HEET VINODBHAI GADHIYA** · Machine learning and embedded AI engineer
 
 I build machine-learning systems end to end: from sensors and data collection, through model design and benchmarking, to deployment on microcontrollers with tight memory and latency budgets.
 

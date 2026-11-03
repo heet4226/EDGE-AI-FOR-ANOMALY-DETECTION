@@ -1,4 +1,4 @@
-# Rebuilds the README graphics whenever a project's results or config change, and commits them.
+﻿# Rebuilds the README graphics whenever a project's results or config change, and commits them.
 name: Build README visuals
 on:
   push:

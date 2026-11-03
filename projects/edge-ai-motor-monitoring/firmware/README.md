@@ -1,8 +1,8 @@
-# Firmware: STM32H573 · FreeRTOS · X-CUBE-AI
+﻿# Firmware: STM32H573 · FreeRTOS · X-CUBE-AI
 
 The application code that runs the sensing, the feature extraction, the inference and the web dashboard on an **STM32H573I-DK** board (Cortex-M33 at 250 MHz).
 
-**▶ [Interactive firmware map](https://heet4226.github.io/edge-ai-for-anomaly-detection/edge-ai-motor-monitoring/firmware.html):** a live timing simulation of the tasks, buffers and data flow.
+**▶ [Interactive firmware map](https://heet4226.github.io/EDGE-AI-FOR-ANOMALY-DETECTION/edge-ai-motor-monitoring/firmware.html):** a live timing simulation of the tasks, buffers and data flow.
 
 ## Tasks
 

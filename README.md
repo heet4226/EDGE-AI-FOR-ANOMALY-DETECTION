@@ -1,4 +1,4 @@
-# Machine Learning & Edge AI Portfolio
+﻿# Machine Learning & Edge AI Portfolio
 
 **Heet Gadhiya** · Machine learning and embedded AI engineer
 
@@ -12,7 +12,7 @@ I build machine-learning systems end to end: from sensors and data collection, t
 
 <a href="projects/edge-ai-motor-monitoring/"><picture><source media="(prefers-color-scheme: dark)" srcset="assets/projects/edge-ai-motor-monitoring-dark.svg"><img src="assets/projects/edge-ai-motor-monitoring-light.svg" alt="Project summary: 22 models benchmarked, 20 deployed, best test score 97.1%" width="100%"></picture></a>
 
-<a href="https://heet4226.github.io/edge-ai-for-anomaly-detection/edge-ai-motor-monitoring/"><img src="assets/gallery/journey.png" width="100%" alt="Start the interactive guided journey through the project"></a>
+<a href="https://heet4226.github.io/EDGE-AI-FOR-ANOMALY-DETECTION/edge-ai-motor-monitoring/"><img src="assets/gallery/journey.png" width="100%" alt="Start the interactive guided journey through the project"></a>
 
 <p>
 <a href="projects/edge-ai-motor-monitoring/firmware/Threads/Ethernet/lwip/webpage/"><img src="assets/gallery/dashboard.png" width="49%" alt="Live dashboard served by the MCU"></a>
@@ -27,7 +27,7 @@ I build machine-learning systems end to end: from sensors and data collection, t
 
 | Project | Area | Highlights |
 |---|---|---|
-| [**Edge AI Motor Condition Monitoring on STM32**](projects/edge-ai-motor-monitoring/) | Edge AI · TinyML · anomaly detection | 22 classical, deep, unsupervised and multi-task models benchmarked on accuracy, false alarms, memory and latency; multi-task network deployed in FreeRTOS firmware with a live web dashboard · [interactive overview](https://heet4226.github.io/edge-ai-for-anomaly-detection/edge-ai-motor-monitoring/) |
+| [**Edge AI Motor Condition Monitoring on STM32**](projects/edge-ai-motor-monitoring/) | Edge AI · TinyML · anomaly detection | 22 classical, deep, unsupervised and multi-task models benchmarked on accuracy, false alarms, memory and latency; multi-task network deployed in FreeRTOS firmware with a live web dashboard · [interactive overview](https://heet4226.github.io/EDGE-AI-FOR-ANOMALY-DETECTION/edge-ai-motor-monitoring/) |
 
 ## Skills shown here
 

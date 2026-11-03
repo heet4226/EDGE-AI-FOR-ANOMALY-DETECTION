@@ -1,4 +1,4 @@
-﻿#!/usr/bin/env python3
+#!/usr/bin/env python3
 """
 Build the clickable, animated visuals shown in this project's README.
 
@@ -78,6 +78,13 @@ def right_text(m):
 
 def short(name):
     return re.sub(r"\s*\(.*?\)", "", name)
+
+
+def png_size(path):
+    import struct
+    with open(path, "rb") as f:
+        head = f.read(24)
+    return struct.unpack(">II", head[16:24])
 
 
 def is_file(p):
@@ -349,16 +356,22 @@ def model_readme(m):
     if m["settings"]: L += [f"**Model:** {m['settings']}", ""]
     if m["note"]: L += [f"> {m['note']}", ""]
     if code: L += ["### Code", ""] + [f"- [`{p.name}`]({p.name})" for p in code] + [""]
+    arch = sorted((folder / "architecture").glob("*.png")) if (folder / "architecture").exists() else []
+    if arch:
+        L += ["### Architecture", ""]
+        L += [f'<a href="architecture/{p.name}"><img src="architecture/{p.name}" width="{"100%" if (lambda wh: wh[0] / wh[1] > 1.3)(png_size(p)) else "49%"}" alt="{m["name"]} architecture {k+1}"></a>' for k, p in enumerate(arch)] + [""]
     if figs:
         L += ["### Results from the notebook", "",
-              "<sub>Cross-validation and training plots, plus the notebook's manual test. The manual test plots one example recording "
-              "at a time (picked in a file dialog), so they show a single condition, often the thermal-fault recording. "
-              "Scores across all 7 test recordings are in the chart above.</sub>", ""]
-        L += [f'<a href="figures/{p.name}"><img src="figures/{p.name}" width="49%" alt="{m["name"]} result plot {k+1}"></a>' for k, p in enumerate(figs[:6])]
-        if len(figs) > 6:
-            L += ["", "<details><summary>More plots (" + str(len(figs) - 6) + ")</summary>", ""]
-            L += [f'<a href="figures/{p.name}"><img src="figures/{p.name}" width="49%"></a>' for p in figs[6:]] + ["", "</details>"]
+              "<sub>Cross-validation and training plots, and the notebook's manual test on one example recording (named in the plot title).</sub>", ""]
+        L += [f'<a href="figures/{p.name}"><img src="figures/{p.name}" width="49%" alt="{m["name"]} result plot {k+1}"></a>' for k, p in enumerate(figs[:24])]
+        if len(figs) > 24:
+            L += ["", f"<details><summary>More plots ({len(figs) - 24})</summary>", ""]
+            L += [f'<a href="figures/{p.name}"><img src="figures/{p.name}" width="49%"></a>' for p in figs[24:]] + ["", "</details>"]
         L += [""]
+    ft = sorted((folder / "fault_tests").glob("*.png")) if (folder / "fault_tests").exists() else []
+    if ft:
+        L += ["### Tests on the fault recordings", "", "<sub>The model on the three fault recordings: Tf3 mechanical fault, Tf5 electrical fault and Tf7 thermal fault (named in each plot title).</sub>", ""]
+        L += [f'<a href="fault_tests/{p.name}"><img src="fault_tests/{p.name}" width="49%" alt="{m["name"]} fault test {k+1}"></a>' for k, p in enumerate(ft)] + [""]
     replace_block(folder / "README.md", "\n".join(L), default_after="\n")
 
 

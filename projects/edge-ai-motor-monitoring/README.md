@@ -1,4 +1,4 @@
-﻿# Edge AI Motor Condition Monitoring on STM32
+# Edge AI Motor Condition Monitoring on STM32
 
 **Real-time fault detection for a DC motor, running entirely on a Cortex-M33 microcontroller.** Four sensors are turned into 14 features on the device, and a neural network classifies every 450 ms window into 7 motor states and faults. I benchmarked 22 machine-learning and deep-learning models on accuracy, false alarms, memory, and inference time, and deployed 20 of them on the STM32.
 

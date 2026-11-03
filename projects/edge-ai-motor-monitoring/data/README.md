@@ -1,4 +1,4 @@
-﻿# Dataset
+# Dataset
 
 The raw recordings are **not published**. This page describes the data so that the code and results can be understood, and so that a compatible dataset can be recorded. Only aggregate statistics are shared (`../results/dataset_stats.json`).
 
@@ -49,6 +49,26 @@ The raw recordings are **not published**. This page describes the data so that t
 | 8–12 | `Vib_Min`, `Vib_Q1`, `Vib_Median`, `Vib_Q3`, `Vib_Max` | LIS3DH | order statistics | shape and asymmetry of the vibration |
 | 13 | `Vib_Variance` | LIS3DH | variance of a | looseness, imbalance |
 | 14 | `Vib_Skewness` | LIS3DH | third standardized moment | impacts in one direction |
+
+## Feature analysis
+
+How the data was explored before modelling. Click any image to enlarge it.
+
+<a href="figures/dataset_overview.png"><img src="figures/dataset_overview.png" width="49%" alt="From recordings to model windows"></a>
+<a href="figures/pipeline_steps.png"><img src="figures/pipeline_steps.png" width="49%" alt="Acquire, clean, extract, package"></a>
+
+**Each fault leaves a clear signature in at least one feature:**
+
+<a href="figures/thermal_vs_normal.png"><img src="figures/thermal_vs_normal.png" width="32%" alt="Thermal fault: temperature slope"></a>
+<a href="figures/electrical_vs_normal.png"><img src="figures/electrical_vs_normal.png" width="32%" alt="Electrical fault: RMS current"></a>
+<a href="figures/mechanical_vs_normal.png"><img src="figures/mechanical_vs_normal.png" width="32%" alt="Mechanical fault: vibration RMS"></a>
+
+**Which features carry the information:**
+
+<a href="figures/fisher_scores.png"><img src="figures/fisher_scores.png" width="49%" alt="Fisher score per feature"></a>
+<a href="figures/feature_importance.png"><img src="figures/feature_importance.png" width="49%" alt="Random forest and permutation importance"></a>
+<a href="figures/feature_correlation.png"><img src="figures/feature_correlation.png" width="49%" alt="Feature correlation and redundancy"></a>
+<a href="figures/seven_feature_subset.png"><img src="figures/seven_feature_subset.png" width="49%" alt="Seven features match the full set"></a>
 
 ## Expected layout (to run the notebooks)
 

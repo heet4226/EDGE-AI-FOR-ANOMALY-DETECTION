@@ -1,4 +1,4 @@
-﻿# Machine Learning & Edge AI Portfolio
+# Machine Learning & Edge AI Portfolio
 
 **HEET VINODBHAI GADHIYA** · Machine learning and embedded AI engineer
 

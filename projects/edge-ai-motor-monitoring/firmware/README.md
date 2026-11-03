@@ -1,4 +1,4 @@
-﻿# Firmware: STM32H573 · FreeRTOS · X-CUBE-AI
+# Firmware: STM32H573 · FreeRTOS · X-CUBE-AI
 
 The application code that runs the sensing, the feature extraction, the inference and the web dashboard on an **STM32H573I-DK** board (Cortex-M33 at 250 MHz).
 

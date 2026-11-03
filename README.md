@@ -4,7 +4,7 @@
 
 I build machine-learning systems end to end: from sensors and data collection, through model design and benchmarking, to deployment on microcontrollers with tight memory and latency budgets.
 
-![Python](https://img.shields.io/badge/Python-3776AB?logo=python&logoColor=white) ![TensorFlow](https://img.shields.io/badge/TensorFlow-FF6F00?logo=tensorflow&logoColor=white) ![scikit-learn](https://img.shields.io/badge/scikit--learn-F7931E?logo=scikitlearn&logoColor=white) ![ONNX](https://img.shields.io/badge/ONNX-005CED?logo=onnx&logoColor=white) ![C](https://img.shields.io/badge/C-A8B9CC?logo=c&logoColor=black) ![STM32](https://img.shields.io/badge/STM32-03234B?logo=stmicroelectronics&logoColor=white) ![FreeRTOS](https://img.shields.io/badge/FreeRTOS-5B8C32)
+[![Python](https://img.shields.io/badge/Python-3776AB?logo=python&logoColor=white)](https://www.python.org) [![TensorFlow](https://img.shields.io/badge/TensorFlow-FF6F00?logo=tensorflow&logoColor=white)](https://www.tensorflow.org) [![scikit-learn](https://img.shields.io/badge/scikit--learn-F7931E?logo=scikitlearn&logoColor=white)](https://scikit-learn.org) [![ONNX](https://img.shields.io/badge/ONNX-005CED?logo=onnx&logoColor=white)](https://onnx.ai) [![C](https://img.shields.io/badge/C-A8B9CC?logo=c&logoColor=black)](https://en.cppreference.com/w/c) [![STM32](https://img.shields.io/badge/STM32-03234B?logo=stmicroelectronics&logoColor=white)](https://www.st.com/en/microcontrollers-microprocessors/stm32-32-bit-arm-cortex-mcus.html) [![FreeRTOS](https://img.shields.io/badge/FreeRTOS-5B8C32)](https://www.freertos.org)
 
 ## Projects
 

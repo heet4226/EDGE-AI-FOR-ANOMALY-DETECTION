@@ -1,0 +1,319 @@
+﻿{
+  "title": "Edge AI Motor Condition Monitoring on STM32",
+  "repo_url": "https://github.com/Heet4226/machine-learning-portfolio",
+  "branch": "main",
+  "project_path": "projects/edge-ai-motor-monitoring",
+  "pages_url": "https://Heet4226.github.io/machine-learning-portfolio/edge-ai-motor-monitoring/",
+  "pages_dir": "../../docs/edge-ai-motor-monitoring",
+  "results_csv": "results/model_comparison.csv",
+  "metric": {
+    "key": "test_score",
+    "label": "Test score",
+    "suffix": "%",
+    "decimals": 1,
+    "higher_is_better": true,
+    "scale_max": 100
+  },
+  "row_right": {
+    "header": "FALSE ALARMS · INFERENCE · FLASH",
+    "template": "{false_alarm:.1f}% · {infer_ms:.2f} ms · {flash_kib:.1f} KiB",
+    "fallback": "not deployable on MCU"
+  },
+  "card_fields": [
+    [
+      "Test score",
+      "test_score",
+      "{:.1f}%"
+    ],
+    [
+      "CV macro F1",
+      "cv_f1",
+      "{:.1f}%"
+    ],
+    [
+      "Fault detection",
+      "detection",
+      "{:.1f}%"
+    ],
+    [
+      "False alarms",
+      "false_alarm",
+      "{:.1f}%"
+    ],
+    [
+      "Class accuracy",
+      "class_acc",
+      "{:.1f}%"
+    ],
+    [
+      "Inference (STM32H573)",
+      "infer_ms",
+      "{:.3f} ms"
+    ],
+    [
+      "Flash",
+      "flash_kib",
+      "{:.2f} KiB"
+    ],
+    [
+      "RAM",
+      "ram_kib",
+      "{:.2f} KiB"
+    ],
+    [
+      "MACC",
+      "macc",
+      "{:,.0f}"
+    ],
+    [
+      "Training time",
+      "train_s",
+      "{:.1f} s"
+    ]
+  ],
+  "baseline_note": "Test score = balanced accuracy of fault vs. no-fault on 7 unseen test recordings (mean of fault detection rate and 1 − false alarm rate).",
+  "pipeline": [
+    {
+      "title": "SENSORS · 200 Hz",
+      "kind": "data",
+      "boxes": [
+        {
+          "name": "Current & voltage",
+          "detail": "INA260 · I²C",
+          "big": "200",
+          "unit": "Hz",
+          "color": [
+            "#2268BB",
+            "#5C9EEA"
+          ]
+        },
+        {
+          "name": "Vibration",
+          "detail": "LIS3DH · SPI",
+          "big": "200",
+          "unit": "Hz",
+          "color": [
+            "#5B7F9E",
+            "#8FB0CC"
+          ]
+        },
+        {
+          "name": "Temperature",
+          "detail": "DS18B20 · 1-Wire",
+          "big": "1.25",
+          "unit": "Hz",
+          "color": [
+            "#33414C",
+            "#C5D0D8"
+          ]
+        },
+        {
+          "name": "PWM command",
+          "detail": "BTS7960 H-bridge",
+          "big": "0–100",
+          "unit": "%",
+          "color": [
+            "#8A98A3",
+            "#6F808C"
+          ]
+        }
+      ]
+    },
+    {
+      "title": "ON-DEVICE PREPROCESSING",
+      "kind": "prep",
+      "boxes": [
+        {
+          "name": "Feature extraction",
+          "detail": "firmware · every 15 ms",
+          "big": "14",
+          "unit": "features"
+        },
+        {
+          "name": "Sliding window",
+          "detail": "30 vectors · step 10",
+          "big": "30×14",
+          "unit": "input"
+        },
+        {
+          "name": "Session-wise CV",
+          "detail": "StratifiedGroupKFold",
+          "big": "5",
+          "unit": "folds"
+        }
+      ]
+    },
+    {
+      "title": "MODELS · 22",
+      "kind": "models"
+    },
+    {
+      "title": "EVALUATION",
+      "kind": "eval",
+      "boxes": [
+        {
+          "name": "Unseen recordings",
+          "detail": "7 test sessions",
+          "big": "2,582",
+          "unit": "scored windows"
+        },
+        {
+          "name": "On-target (MCU)",
+          "detail": "X-CUBE-AI · Cortex-M33",
+          "big": "20/22",
+          "unit": "deployed"
+        }
+      ]
+    },
+    {
+      "title": "OUTPUTS",
+      "kind": "out",
+      "boxes": [
+        {
+          "name": "Live dashboard",
+          "detail": "Ethernet · lwIP",
+          "big": "150",
+          "unit": "ms updates",
+          "link": "dashboard/"
+        },
+        {
+          "name": "Firmware",
+          "detail": "FreeRTOS · 7 tasks",
+          "big": "STM32",
+          "unit": "H573",
+          "link": "firmware/"
+        }
+      ],
+      "add_best": true
+    }
+  ],
+  "data_cards": [
+    {
+      "name": "Normal operation",
+      "big": "12",
+      "unit": "sessions · 119k vectors",
+      "detail": "with and without load",
+      "color": [
+        "#1A7F37",
+        "#3FB950"
+      ]
+    },
+    {
+      "name": "Motor off",
+      "big": "8",
+      "unit": "sessions · 41k vectors",
+      "detail": "supply on and off",
+      "color": [
+        "#59636E",
+        "#9198A1"
+      ]
+    },
+    {
+      "name": "Turning on / off",
+      "big": "16",
+      "unit": "sessions · 24k vectors",
+      "detail": "4 ramp speeds, 2 directions",
+      "color": [
+        "#8A98A3",
+        "#6E7681"
+      ]
+    },
+    {
+      "name": "Electrical fault",
+      "big": "8",
+      "unit": "sessions · 26k vectors",
+      "detail": "abnormal current",
+      "color": [
+        "#BF7A10",
+        "#EDAE47"
+      ]
+    },
+    {
+      "name": "Mechanical fault",
+      "big": "8",
+      "unit": "sessions · 10k vectors",
+      "detail": "loosened mounting",
+      "color": [
+        "#C93A4E",
+        "#F06B7C"
+      ]
+    },
+    {
+      "name": "Thermal fault",
+      "big": "8",
+      "unit": "sessions · 20k vectors",
+      "detail": "abnormal heating",
+      "color": [
+        "#7A49C6",
+        "#A984EE"
+      ]
+    }
+  ],
+  "data_link": "data/",
+  "families": [
+    {
+      "id": "classic",
+      "name": "Classical ML",
+      "color": [
+        "#2268BB",
+        "#5C9EEA"
+      ]
+    },
+    {
+      "id": "nn",
+      "name": "Neural networks",
+      "color": [
+        "#0B8A82",
+        "#2EC4B8"
+      ]
+    },
+    {
+      "id": "anomaly",
+      "name": "Anomaly detection",
+      "color": [
+        "#BF7A10",
+        "#EDAE47"
+      ]
+    },
+    {
+      "id": "hybrid",
+      "name": "Hybrid multi-task",
+      "color": [
+        "#C93A4E",
+        "#F06B7C"
+      ]
+    }
+  ],
+  "portfolio_card": {
+    "slug": "edge-ai-motor-monitoring",
+    "out_dir": "../../assets/projects",
+    "eyebrow": "EDGE AI · TINYML · EMBEDDED DEEP LEARNING",
+    "subtitle": "Real-time fault detection for a DC motor, running entirely on a Cortex-M33.",
+    "stats": [
+      [
+        "22",
+        "models benchmarked"
+      ],
+      [
+        "20",
+        "running on the MCU"
+      ],
+      [
+        "97.1%",
+        "best test score"
+      ],
+      [
+        "1.58 ms",
+        "per prediction"
+      ]
+    ],
+    "tags": [
+      "TensorFlow",
+      "scikit-learn",
+      "X-CUBE-AI",
+      "STM32H573",
+      "FreeRTOS",
+      "multi-task learning"
+    ]
+  }
+}

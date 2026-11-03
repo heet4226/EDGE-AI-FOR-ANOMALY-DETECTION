@@ -1,0 +1,576 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Edge AI Motor Condition Monitoring on STM32</title>
+<meta name="description" content="22 machine-learning and deep-learning models benchmarked for real-time motor fault detection and deployed on an STM32H573 microcontroller.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap">
+<style>
+/* Project page: all numbers come from viz_data.json, written by tools/build_readme_visuals.py */
+:root{
+  --paper:#F2F5F7; --panel:#FFFFFF; --ink:#13202A; --ink-2:#52616D; --ink-3:#7C8A95;
+  --rule:#D3DCE2; --rule-2:#E6ECF0; --hi:#13202A; --on-hi:#FFFFFF;
+  /* data groups (cool neutrals) */
+  --d0:#2268BB; --d1:#5B7F9E; --d2:#33414C; --d3:#8A98A3;
+  /* model families (colour) */
+  --f0:#7A49C6; --f1:#4F8A1E; --f2:#BF7A10; --f3:#C93A4E; --f4:#0B8A82;
+  --ok:#1C8248; --warn:#A86E12; --bad:#BD3128; --neg:#2F6FB5; --pos:#C2452D;
+  --f-display:'Archivo','Arial Narrow',Arial,sans-serif;
+  --f-body:'IBM Plex Sans',system-ui,-apple-system,'Segoe UI',sans-serif;
+  --f-mono:'IBM Plex Mono',ui-monospace,Menlo,Consolas,monospace;
+  --s-1:4px; --s-2:8px; --s-3:12px; --s-4:16px; --s-5:24px; --s-6:36px; --s-7:56px;
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --paper:#0C1318; --panel:#121C23; --ink:#E1E8ED; --ink-2:#97A7B3; --ink-3:#6D7E8A;
+  --rule:#26343E; --rule-2:#1A252D; --hi:#E1E8ED; --on-hi:#0C1318;
+  --d0:#5C9EEA; --d1:#8FB0CC; --d2:#C5D0D8; --d3:#6F808C;
+  --f0:#A984EE; --f1:#8DC453; --f2:#EDAE47; --f3:#F06B7C; --f4:#2EC4B8;
+  --ok:#4CC27E; --warn:#E5A63A; --bad:#F06A5F; --neg:#5E9BE0; --pos:#EE7A5E; color-scheme:dark }}
+:root[data-theme="dark"]{
+  --paper:#0C1318; --panel:#121C23; --ink:#E1E8ED; --ink-2:#97A7B3; --ink-3:#6D7E8A;
+  --rule:#26343E; --rule-2:#1A252D; --hi:#E1E8ED; --on-hi:#0C1318;
+  --d0:#5C9EEA; --d1:#8FB0CC; --d2:#C5D0D8; --d3:#6F808C;
+  --f0:#A984EE; --f1:#8DC453; --f2:#EDAE47; --f3:#F06B7C; --f4:#2EC4B8;
+  --ok:#4CC27E; --warn:#E5A63A; --bad:#F06A5F; --neg:#5E9BE0; --pos:#EE7A5E; color-scheme:dark }
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html,body{margin:0}
+body{background:var(--paper);color:var(--ink);font-family:var(--f-body);font-size:15.5px;line-height:1.55;padding:0 16px 56px}
+.wrap{max-width:1240px;margin:0 auto}
+h1,h2,h3{font-family:var(--f-display);text-wrap:balance;margin:0;letter-spacing:-.01em}
+h1{font-size:clamp(34px,5.2vw,62px);font-weight:800;font-stretch:78%;line-height:1}
+h2{font-size:clamp(24px,3vw,32px);font-weight:750;font-stretch:82%;line-height:1.1}
+h3{font-size:17px;font-weight:700;font-stretch:90%}
+p{margin:0}
+code,.mono{font-family:var(--f-mono);font-size:.88em}
+a{color:inherit}
+.eyebrow{font-family:var(--f-mono);font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3)}
+.lede{max-width:70ch;color:var(--ink-2);font-size:17px}
+.prose{max-width:72ch;color:var(--ink-2)}
+.prose b,.lede b{color:var(--ink);font-weight:600}
+
+/* top strip */
+.topbar{display:flex;justify-content:space-between;align-items:center;gap:12px;padding-top:18px;flex-wrap:wrap}
+.sample{font:500 11.5px var(--f-mono);color:var(--warn);border:1px dashed currentColor;border-radius:999px;padding:3px 10px}
+.links{display:flex;gap:8px;flex-wrap:wrap}
+
+/* masthead */
+.mast{padding-block:var(--s-6) var(--s-6);display:grid;gap:var(--s-4)}
+.facts{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));border-top:1px solid var(--rule);border-bottom:1px solid var(--rule);margin-top:var(--s-3)}
+.fact{padding:var(--s-3) var(--s-3) var(--s-3) 0;display:grid;gap:2px;min-width:0}
+.fact+.fact{padding-left:var(--s-3);border-left:1px solid var(--rule-2)}
+.fact b{font-family:var(--f-display);font-weight:750;font-stretch:85%;font-size:26px;font-variant-numeric:tabular-nums;line-height:1.1}
+.fact span{font-size:12.5px;color:var(--ink-2);line-height:1.35}
+@media (max-width:900px){.facts{grid-template-columns:repeat(3,minmax(0,1fr))}.fact:nth-child(4){border-left:0;padding-left:0}.fact:nth-child(n+4){border-top:1px solid var(--rule-2)}}
+@media (max-width:520px){.facts{grid-template-columns:repeat(2,minmax(0,1fr))}.fact:nth-child(odd){border-left:0;padding-left:0}.fact:nth-child(4){border-left:1px solid var(--rule-2);padding-left:var(--s-3)}.fact:nth-child(n+3){border-top:1px solid var(--rule-2)}}
+
+section{padding-block:var(--s-6);border-top:1px solid var(--rule);display:grid;gap:var(--s-4)}
+.sechead{display:grid;gap:var(--s-2)}
+
+/* controls */
+.bar{display:flex;flex-wrap:wrap;gap:var(--s-2) var(--s-3);align-items:center}
+.btn{font:600 13px var(--f-body);border:1px solid var(--rule);background:var(--panel);color:var(--ink);border-radius:6px;padding:7px 12px;cursor:pointer;display:inline-flex;gap:6px;align-items:center;min-height:34px;text-decoration:none}
+.btn:hover{border-color:var(--ink-3)}
+.btn.primary{background:var(--hi);color:var(--on-hi);border-color:var(--hi)}
+.btn:focus-visible,.seg button:focus-visible,.tile:focus-visible{outline:2px solid var(--d0);outline-offset:2px}
+.seg{display:inline-flex;border:1px solid var(--rule);border-radius:6px;overflow:hidden;background:var(--panel);flex-wrap:wrap}
+.seg button{font:500 12.5px var(--f-mono);border:0;background:transparent;color:var(--ink-2);padding:7px 10px;cursor:pointer;min-height:32px;display:inline-flex;align-items:center;gap:6px}
+.seg button+button{border-left:1px solid var(--rule)}
+.seg button[aria-pressed="true"]{background:var(--hi);color:var(--on-hi)}
+.seg i{width:9px;height:9px;border-radius:2px;display:inline-block}
+.lbl{font:500 11.5px var(--f-mono);color:var(--ink-3);letter-spacing:.04em;text-transform:uppercase}
+.note{font-size:12.5px;color:var(--ink-3)}
+.clock{font:500 13px var(--f-mono);font-variant-numeric:tabular-nums;color:var(--ink-2);margin-left:auto}
+.clock b{color:var(--ink);font-weight:600}
+
+.caption{display:grid;grid-template-columns:auto 1fr;gap:var(--s-2) var(--s-4);align-items:start;background:var(--panel);border:1px solid var(--rule);border-radius:10px;padding:var(--s-3) var(--s-4)}
+.caption .step{font:600 12px var(--f-mono);color:var(--ink-3);padding-top:3px;white-space:nowrap}
+.caption h3{margin-bottom:2px}
+.caption p{color:var(--ink-2);max-width:95ch;font-size:14.5px}
+.caption .nav{grid-column:1/-1;display:flex;gap:var(--s-2);flex-wrap:wrap;align-items:center}
+.prog{flex:1;min-width:120px;height:3px;background:var(--rule-2);border-radius:2px;overflow:hidden}
+.prog i{display:block;height:100%;width:0;background:var(--ink-2);transition:width .3s}
+
+.scroller{overflow-x:auto;-webkit-overflow-scrolling:touch;border:1px solid var(--rule);border-radius:10px;background:var(--panel)}
+.scroller svg{display:block;width:100%;height:auto}
+#mapSvg{min-width:980px}
+/* svg text */
+.nbox{fill:var(--panel);stroke:var(--rule);stroke-width:1.2}
+.glow{fill:none;stroke-width:2.5;opacity:0}
+.ntitle{font-family:var(--f-display);font-weight:700;font-stretch:88%;font-size:14.5px;fill:var(--ink)}
+.nsub{font-family:var(--f-mono);font-size:10.5px;fill:var(--ink-3)}
+.nval{font-family:var(--f-mono);font-size:11px;fill:var(--ink-2)}
+.nbig{font-family:var(--f-display);font-weight:750;font-stretch:85%;font-size:24px;fill:var(--ink);font-variant-numeric:tabular-nums}
+.wire{fill:none;stroke:var(--rule);stroke-width:1.6}
+.colhead{font-family:var(--f-mono);font-size:10.5px;letter-spacing:.08em;fill:var(--ink-3)}
+.led{stroke:var(--rule);stroke-width:1;transition:fill .25s}
+.node,.wire{transition:opacity .35s}
+.dim{opacity:.16}
+.dot{stroke:var(--panel);stroke-width:1.5}
+.axis{stroke:var(--rule);stroke-width:1}
+.grid{stroke:var(--rule-2);stroke-width:1}
+.tl{font-family:var(--f-mono);font-size:11px;fill:var(--ink-3)}
+.tlab{font-family:var(--f-body);font-size:12.5px;fill:var(--ink)}
+.tval{font-family:var(--f-mono);font-size:11.5px;fill:var(--ink-2);font-variant-numeric:tabular-nums}
+
+.tip{position:fixed;pointer-events:none;background:var(--hi);color:var(--on-hi);font:500 12px var(--f-mono);padding:6px 9px;border-radius:5px;max-width:320px;line-height:1.45;z-index:9}
+
+/* leaderboard */
+.split{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);gap:var(--s-5);align-items:start}
+@media (max-width:980px){.split{grid-template-columns:1fr}}
+#lbSvg{min-width:560px}
+.bar-row{cursor:pointer}
+.bar-row:hover .tlab{text-decoration:underline}
+.card{background:var(--panel);border:1px solid var(--rule);border-radius:10px;padding:var(--s-4);display:grid;gap:var(--s-3);align-content:start;min-width:0}
+.card header{display:grid;grid-template-columns:auto 1fr auto;gap:4px var(--s-3);align-items:baseline}
+.card .sq{width:11px;height:11px;border-radius:2px;align-self:center}
+.card h3{font-size:21px}
+.prio{font:600 12px var(--f-mono);padding:3px 7px;border-radius:4px;border:1px solid var(--rule);white-space:nowrap}
+.card .fn{grid-column:2/-1;font-family:var(--f-mono);font-size:12px;color:var(--ink-3);overflow-wrap:anywhere}
+.kv{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:var(--s-2);border-block:1px solid var(--rule-2);padding-block:var(--s-2)}
+.kv div{display:grid;min-width:0}
+.kv span{font:500 10.5px var(--f-mono);letter-spacing:.05em;text-transform:uppercase;color:var(--ink-3)}
+.kv b{font-weight:600;font-size:15px;font-variant-numeric:tabular-nums}
+.io{display:grid;grid-template-columns:auto 1fr;gap:4px 12px;font-size:13.5px}
+.io span{font:500 10.5px var(--f-mono);letter-spacing:.05em;text-transform:uppercase;color:var(--ink-3);padding-top:2px}
+.io code{font-size:12px;overflow-wrap:anywhere}
+.meter{height:6px;background:var(--rule-2);border-radius:3px;overflow:hidden}
+.meter i{display:block;height:100%;transition:width .5s}
+.card p{font-size:14px;color:var(--ink-2)}
+
+/* data tiles */
+.tiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(64px,1fr));gap:6px}
+.tile{position:relative;border:1px solid var(--rule);background:var(--panel);border-radius:6px;padding:6px 6px 8px;cursor:pointer;font:500 11px var(--f-mono);color:var(--ink-2);text-align:left;display:grid;gap:5px;transition:opacity .3s,transform .15s}
+.tile:hover{transform:translateY(-1px);border-color:var(--ink-3)}
+.tile .b{height:4px;border-radius:2px;background:var(--rule-2);overflow:hidden}
+.tile .b i{display:block;height:100%}
+.tile.off{opacity:.18}
+.tile.sel{outline:2px solid var(--ink);outline-offset:1px}
+.fileinfo{font:500 13px var(--f-mono);color:var(--ink-2);background:var(--panel);border:1px solid var(--rule);border-radius:10px;padding:10px 14px;min-height:44px;overflow-wrap:anywhere}
+.fileinfo b{color:var(--ink)}
+.dsum{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:var(--s-3)}
+@media (max-width:760px){.dsum{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.dsum div{border-top:2px solid;padding-top:6px;display:grid}
+.dsum b{font-family:var(--f-display);font-weight:750;font-stretch:85%;font-size:22px;font-variant-numeric:tabular-nums}
+.dsum span{font-size:12.5px;color:var(--ink-2)}
+
+/* excel */
+.two{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:var(--s-5);align-items:start}
+@media (max-width:980px){.two{grid-template-columns:1fr}}
+#hmSvg{min-width:520px} #fiSvg{min-width:440px}
+
+/* repo tree */
+.tree{font:500 13px/1.75 var(--f-mono);background:var(--panel);border:1px solid var(--rule);border-radius:10px;padding:var(--s-4);overflow-x:auto;white-space:pre;color:var(--ink)}
+.tree .c{color:var(--ink-3)}
+.tree .n{font-weight:600}
+
+/* timeline */
+.boot{list-style:none;margin:0;padding:0;display:grid}
+.boot li{display:grid;grid-template-columns:120px minmax(0,1fr);gap:var(--s-4);padding:var(--s-3) 0;border-bottom:1px solid var(--rule-2)}
+.boot li:last-child{border-bottom:0}
+.boot .when{font:600 12.5px var(--f-mono);color:var(--ink-2);padding-top:2px}
+.boot .what{font-size:14.5px;color:var(--ink-2);max-width:88ch}
+.boot .what b{color:var(--ink);font-weight:600}
+@media (max-width:560px){.boot li{grid-template-columns:1fr;gap:2px}}
+
+/* findings */
+.finds{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--s-3)}
+@media (max-width:860px){.finds{grid-template-columns:1fr}}
+.find{background:var(--panel);border:1px solid var(--rule);border-radius:10px;padding:var(--s-3) var(--s-4);display:grid;gap:6px;align-content:start}
+.find header{display:flex;gap:var(--s-2);align-items:baseline;flex-wrap:wrap}
+.find h3{font-size:16.5px}
+.sev{font:600 10.5px var(--f-mono);letter-spacing:.05em;text-transform:uppercase;padding:2px 6px;border-radius:4px;border:1px solid currentColor}
+.find p{font-size:14px;color:var(--ink-2)}
+.find .where{font-family:var(--f-mono);font-size:11.5px;color:var(--ink-3)}
+
+.cmd{position:relative;font:500 13px/1.7 var(--f-mono);background:var(--hi);color:var(--on-hi);border-radius:10px;padding:var(--s-4);overflow-x:auto;white-space:pre}
+.cmd .btn{position:absolute;top:10px;right:10px;background:transparent;color:var(--on-hi);border-color:color-mix(in oklab,var(--on-hi) 35%,transparent)}
+footer{padding-top:var(--s-5);border-top:1px solid var(--rule);font-size:12.5px;color:var(--ink-3);display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px}
+@media (prefers-reduced-motion: reduce){*{transition:none!important}}
+</style><style>
+.dsum{grid-template-columns:repeat(7,minmax(0,1fr))}
+@media (max-width:1000px){.dsum{grid-template-columns:repeat(4,minmax(0,1fr))}}
+@media (max-width:560px){.dsum{grid-template-columns:repeat(2,minmax(0,1fr))}}
+#cpSvg{min-width:520px}
+.pill{font:600 11px var(--f-mono);padding:2px 7px;border-radius:999px;border:1px solid currentColor;white-space:nowrap}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<div class="topbar">
+  <span class="eyebrow">Portfolio · Edge AI</span>
+  <div class="links">
+    <a class="btn" id="lnkRepo" href="#" target="_blank" rel="noopener">Code on GitHub ↗</a>
+    <a class="btn" href="firmware.html">Firmware map</a>
+    <button class="btn" id="themeBtn" type="button">◐ Theme</button>
+  </div>
+</div>
+
+<header class="mast">
+  <div class="eyebrow">STM32H573 · Cortex-M33 · FreeRTOS · X-CUBE-AI · TensorFlow · scikit-learn</div>
+  <h1>Edge AI motor condition monitoring, end to end</h1>
+  <p class="lede">Current, voltage, vibration and temperature from a DC motor are turned into <b>14 features on the microcontroller</b> every 15 ms. A model then classifies each <b>450 ms window</b> into 7 motor states and faults. I benchmarked <b>22 models</b> on accuracy, false alarms, memory and speed and deployed <b>20 of them on the STM32</b>. The winner, a multi-task MLP, reaches <b>97.1%</b> on unseen recordings in <b>1.58 ms</b>.</p>
+  <div class="facts" role="list" id="facts"></div>
+</header>
+
+<section id="pipeline" aria-labelledby="pipe-h">
+  <div class="sechead">
+    <div class="eyebrow">sensors → features → window → model → decision</div>
+    <h2 id="pipe-h">The pipeline, live</h2>
+    <p class="prose">Every dot is a window of sensor data moving from the sensors through on-device feature extraction into one of the <b>22 models</b>, then through evaluation and onto the MCU. A box lights up as a window passes through it. Click a model lamp to open that model's card, or take the guided tour.</p>
+  </div>
+  <div class="bar">
+    <button class="btn primary" id="tourBtn" type="button">▶ Guided tour</button>
+    <button class="btn" id="playBtn" type="button">Pause</button>
+    <span class="lbl">Speed</span>
+    <div class="seg" id="speedSeg"><button type="button" data-v="0.4">0.4×</button><button type="button" data-v="1" aria-pressed="true">1×</button><button type="button" data-v="2.5">2.5×</button></div>
+    <div class="clock">windows processed <b id="batchCt">0</b></div>
+  </div>
+  <div class="caption">
+    <div class="step" id="capStep">FREE RUN</div>
+    <div><h3 id="capTitle">Everything at once</h3><p id="capText">All stages run continuously. Start the guided tour to follow one window from the sensors to the decision.</p></div>
+    <div class="nav" id="capNav" hidden>
+      <button class="btn" id="prevScene" type="button">◀ Back</button>
+      <button class="btn" id="nextScene" type="button">Next ▶</button>
+      <button class="btn" id="endTour" type="button">End tour</button>
+      <div class="prog"><i id="capProg"></i></div>
+    </div>
+  </div>
+  <div class="scroller"><svg id="mapSvg" viewBox="0 0 1240 560" role="img" aria-label="Pipeline from sensors through features and 22 models to evaluation and deployment"></svg></div>
+</section>
+
+<section id="models" aria-labelledby="lb-h">
+  <div class="sechead">
+    <div class="eyebrow">projects/edge-ai-motor-monitoring/models/01_* … 22_* · results/model_comparison.csv</div>
+    <h2 id="lb-h">All 22 models, ranked</h2>
+    <p class="prose"><b>Test score</b> is the balanced accuracy of fault vs. no fault on 7 recordings the models never saw in training, so it penalises both missed faults and false alarms. Switch the metric or filter by family, and click any bar to open that model's card with a link to its code and results.</p>
+  </div>
+  <div class="bar">
+    <span class="lbl">Metric</span><div class="seg" id="metricSeg"></div>
+    <span class="lbl">Family</span><div class="seg" id="famSeg"></div>
+  </div>
+  <div class="split">
+    <div class="scroller"><svg id="lbSvg" role="img" aria-label="Bar chart of all models by the selected metric"></svg></div>
+    <div class="card" id="mCard" aria-live="polite"></div>
+  </div>
+</section>
+
+<section id="tradeoff" aria-labelledby="sc-h">
+  <div class="sechead">
+    <div class="eyebrow">accuracy vs. cost on the microcontroller</div>
+    <h2 id="sc-h">How much does each point of accuracy cost?</h2>
+    <p class="prose">Each dot is one of the 20 deployed models. Up means more accurate on unseen data; left means cheaper on the MCU (log scale). The dashed line joins the <b>Pareto front</b>: models that no other model beats on both axes.</p>
+  </div>
+  <div class="bar"><span class="lbl">Cost axis</span><div class="seg" id="costSeg"></div></div>
+  <div class="scroller"><svg id="scSvg" viewBox="0 0 1240 420" style="min-width:760px" role="img" aria-label="Scatter plot of test score against cost"></svg></div>
+  <div class="bar" id="scLegend"></div>
+</section>
+
+<section id="data" aria-labelledby="data-h">
+  <div class="sechead">
+    <div class="eyebrow">60 recording sessions · raw data not published, aggregates only</div>
+    <h2 id="data-h">The dataset</h2>
+    <p class="prose">One tile per recording session, coloured by class. The bar shows how many feature vectors a session holds. Sessions cover four ramp speeds (0.1–1 s) and both directions. Hover or tap a tile for details.</p>
+  </div>
+  <div class="dsum" id="dsum"></div>
+  <div class="bar"><span class="lbl">Show</span><div class="seg" id="dataSeg"></div></div>
+  <div class="tiles" id="tiles"></div>
+  <div class="fileinfo" id="fileInfo">Select a session to see its class, size, ramp profile and direction.</div>
+</section>
+
+<section id="analysis" aria-labelledby="xl-h">
+  <div class="sechead">
+    <div class="eyebrow">computed over all 239,367 feature vectors</div>
+    <h2 id="xl-h">What the 14 features see</h2>
+    <p class="prose">Left: how the features move together (red = rise together, blue = opposite). Right: each class's average of each feature, in standard deviations from the overall mean. These fingerprints are what the models learn to tell apart. Hover any cell for the value.</p>
+  </div>
+  <div class="two">
+    <div class="scroller"><svg id="hmSvg" role="img" aria-label="Feature correlation heatmap"></svg></div>
+    <div class="scroller"><svg id="cpSvg" role="img" aria-label="Average z-score of each feature per class"></svg></div>
+  </div>
+</section>
+
+<section id="findings" aria-labelledby="f-h">
+  <div class="sechead"><div class="eyebrow">results</div><h2 id="f-h">What the benchmark shows</h2></div>
+  <div class="finds" id="finds"></div>
+</section>
+
+<section id="timeline" aria-labelledby="t-h">
+  <div class="sechead"><div class="eyebrow">method</div><h2 id="t-h">How it was built</h2></div>
+  <ol class="boot" id="boot"></ol>
+</section>
+
+<section id="repo" aria-labelledby="r-h">
+  <div class="sechead"><div class="eyebrow">repository</div><h2 id="r-h">Where everything lives</h2></div>
+  <div class="tree" id="tree"></div>
+  <div class="sechead"><h3>Run a notebook</h3></div>
+  <div class="cmd"><button class="btn" id="copyBtn" type="button">Copy</button><span id="cmdText"></span></div>
+</section>
+
+<footer><span id="fLeft">YOUR NAME · Machine Learning &amp; Edge AI</span><span>Single-file page · data from results/model_comparison.csv</span></footer>
+</div>
+<div class="tip" id="tip" hidden></div>
+
+<script>
+/* ======================= CONFIG (overridden by viz_data.json when present) ======================= */
+const CONFIG = {
+  repoUrl: "https://github.com/Heet4226/machine-learning-portfolio",
+  branch: "main",
+  projectPath: "projects/edge-ai-motor-monitoring",
+  facts: [["60","recording sessions"],["239 k","feature vectors"],["14","features computed on the MCU"],["22","models benchmarked"],["20","deployed on the STM32"],["97.1%","best test score, unseen data"]],
+  families: [
+    {id:"classic", name:"Classical ML", color:"--d0"},
+    {id:"nn", name:"Neural networks", color:"--f4"},
+    {id:"anomaly", name:"Anomaly detection", color:"--f2"},
+    {id:"hybrid", name:"Hybrid multi-task", color:"--f3"}
+  ],
+  models: [{"name": "Random Forest", "fam": "classic", "test_score": 51.2, "cv_f1": 63.8, "detection": 97.9, "false_alarm": 95.5, "class_acc": 59.6, "flash_kib": 11.86, "ram_kib": 3.41, "infer_ms": 0.034, "macc": 80.0, "train_s": 0.6, "deployed": true, "settings": "Shallow forest on the flattened 30×14 window", "note": "Flags almost every running window as a fault on unseen recordings (95.5% false alarms).", "folder": "models/01_random_forest"}, {"name": "XGBoost", "fam": "classic", "test_score": 86.2, "cv_f1": 89.8, "detection": 95.2, "false_alarm": 22.8, "class_acc": 91.3, "flash_kib": 28.26, "ram_kib": 3.41, "infer_ms": 0.145, "macc": 1061.0, "train_s": 11.2, "deployed": true, "settings": "Small boosted-tree ensemble (few, shallow trees)", "note": "Good in cross-validation but overfits: 22.8% false alarms on unseen recordings.", "folder": "models/02_xgboost"}, {"name": "Linear SVM", "fam": "classic", "test_score": 95.3, "cv_f1": 92.7, "detection": 91.9, "false_alarm": 1.2, "class_acc": 93.5, "flash_kib": 22.23, "ram_kib": 3.19, "infer_ms": 0.191, "macc": 3780.0, "train_s": 343.2, "deployed": true, "settings": "Linear kernel, one weight vector per class", "note": "Robust in the live test; the main confusion is at motor switch-on and switch-off.", "folder": "models/03_linear_svm"}, {"name": "k-Nearest Neighbours", "fam": "classic", "test_score": 90.5, "cv_f1": 81.8, "detection": 87.1, "false_alarm": 6.1, "class_acc": 91.0, "flash_kib": null, "ram_kib": null, "infer_ms": null, "macc": null, "train_s": 346.0, "deployed": false, "settings": "Distance-weighted vote over the stored training set", "note": "Cannot be converted for the MCU: the model stores the whole training set (353 KiB ONNX).", "folder": "models/04_knn"}, {"name": "Decision Tree", "fam": "classic", "test_score": 86.0, "cv_f1": 95.0, "detection": 97.1, "false_alarm": 25.0, "class_acc": 92.4, "flash_kib": 28.07, "ram_kib": 3.65, "infer_ms": 0.095, "macc": 14.0, "train_s": 45.6, "deployed": true, "settings": "Single shallow tree, exported as an if/else chain", "note": "Best classical cross-validation F1, but overfits: 25% false alarms on unseen recordings.", "folder": "models/05_decision_tree"}, {"name": "Logistic Regression", "fam": "classic", "test_score": 96.4, "cv_f1": 93.1, "detection": 96.5, "false_alarm": 3.7, "class_acc": 97.3, "flash_kib": 47.17, "ram_kib": 3.78, "infer_ms": 0.206, "macc": 45026.0, "train_s": 101.3, "deployed": true, "settings": "Multinomial logistic regression", "note": "Best classical model on unseen data (96.4%) in 0.21 ms per window.", "folder": "models/06_logistic_regression"}, {"name": "Dense MLP", "fam": "nn", "test_score": 95.3, "cv_f1": 93.6, "detection": 96.7, "false_alarm": 6.1, "class_acc": 97.8, "flash_kib": 65.79, "ram_kib": 3.77, "infer_ms": 0.463, "macc": 14272.0, "train_s": 69.5, "deployed": true, "settings": "Flatten (420) → dense layers → softmax(7)", "note": "Small and fast (0.46 ms) with 97.8% class accuracy on unseen recordings.", "folder": "models/07_dense_mlp"}, {"name": "1D-CNN", "fam": "nn", "test_score": 96.8, "cv_f1": 90.9, "detection": 97.6, "false_alarm": 4.1, "class_acc": 98.3, "flash_kib": 26.9, "ram_kib": 9.02, "infer_ms": 2.774, "macc": 88780.0, "train_s": 131.5, "deployed": true, "settings": "Plain Conv1D stack → softmax(7)", "note": "Second-best test score and the highest class accuracy (98.3%) on unseen recordings.", "folder": "models/08_cnn_1d"}, {"name": "GRU", "fam": "nn", "test_score": 90.9, "cv_f1": 94.5, "detection": 97.9, "false_alarm": 16.1, "class_acc": 95.9, "flash_kib": 132.2, "ram_kib": 102.84, "infer_ms": 4.519, "macc": 63152.0, "train_s": 131.5, "deployed": true, "settings": "Single small GRU layer over 30 time steps", "note": "Strong in cross-validation, but 16.1% false alarms on unseen recordings.", "folder": "models/09_gru"}, {"name": "LSTM", "fam": "nn", "test_score": 96.2, "cv_f1": 86.5, "detection": 93.6, "false_alarm": 1.2, "class_acc": 96.7, "flash_kib": 115.15, "ram_kib": 89.05, "infer_ms": 5.164, "macc": 90018.0, "train_s": 76.9, "deployed": true, "settings": "Single small LSTM layer over 30 time steps", "note": "Only 1.2% false alarms, but needs 89 KiB of RAM on the MCU.", "folder": "models/10_lstm"}, {"name": "Binary MLP classifier", "fam": "nn", "test_score": 96.6, "cv_f1": 92.3, "detection": 94.9, "false_alarm": 1.6, "class_acc": null, "flash_kib": 65.09, "ram_kib": 3.76, "infer_ms": 0.455, "macc": 14075.0, "train_s": 52.3, "deployed": true, "settings": "Dense network with a single safe-vs-fault output", "note": "96.6% test score with 1.6% false alarms; reports safe vs. fault only.", "folder": "models/11_binary_mlp_classifier"}, {"name": "Isolation Forest", "fam": "anomaly", "test_score": 53.0, "cv_f1": 34.2, "detection": 7.1, "false_alarm": 1.1, "class_acc": null, "flash_kib": 59.92, "ram_kib": 2.9, "infer_ms": 0.055, "macc": 2628.0, "train_s": 0.5, "deployed": true, "settings": "Small random-tree ensemble, trained on normal data only", "note": "Detects only 7.1% of the fault windows.", "folder": "models/12_isolation_forest"}, {"name": "One-Class SVM", "fam": "anomaly", "test_score": 86.0, "cv_f1": 92.2, "detection": 72.6, "false_alarm": 0.7, "class_acc": null, "flash_kib": 233.11, "ram_kib": 2.86, "infer_ms": 2.16, "macc": 107511.0, "train_s": 1.7, "deployed": true, "settings": "RBF kernel, small ν, trained on normal data only", "note": "Almost no false alarms, but misses 27% of faults and needs 233 KiB of flash.", "folder": "models/13_one_class_svm"}, {"name": "Local Outlier Factor", "fam": "anomaly", "test_score": 90.1, "cv_f1": 93.4, "detection": 80.7, "false_alarm": 0.6, "class_acc": null, "flash_kib": null, "ram_kib": null, "infer_ms": null, "macc": null, "train_s": null, "deployed": false, "settings": "Density-based, novelty mode, trained on normal data only", "note": "Cannot be converted for the MCU (13 MiB model and an unsupported scan operation).", "folder": "models/14_local_outlier_factor"}, {"name": "Dense Autoencoder", "fam": "anomaly", "test_score": 74.0, "cv_f1": 91.4, "detection": 47.9, "false_alarm": 0.0, "class_acc": null, "flash_kib": 123.91, "ram_kib": 5.61, "infer_ms": 1.04, "macc": 29912.0, "train_s": 44.9, "deployed": true, "settings": "Dense encoder–decoder; reconstruction error is the anomaly score", "note": "Never raised a false alarm, but detects only 48% of the fault windows.", "folder": "models/15_dense_autoencoder"}, {"name": "LSTM Autoencoder", "fam": "anomaly", "test_score": 90.0, "cv_f1": 93.3, "detection": 81.3, "false_alarm": 1.3, "class_acc": null, "flash_kib": 306.53, "ram_kib": 268.0, "infer_ms": 7.149, "macc": 82280.0, "train_s": 194.1, "deployed": true, "settings": "LSTM encoder–decoder over 30 time steps", "note": "Good offline, but needs 268 KiB of RAM on the MCU.", "folder": "models/16_lstm_autoencoder"}, {"name": "Z-score baseline", "fam": "anomaly", "test_score": 78.4, "cv_f1": 86.5, "detection": 57.4, "false_alarm": 0.6, "class_acc": null, "flash_kib": 0.11, "ram_kib": 1.64, "infer_ms": 0.119, "macc": null, "train_s": null, "deployed": true, "settings": "Per-feature mean and std from normal data, plain C", "note": "The sanity floor: plain C, 0.12 ms, detects 57% of the fault windows.", "folder": "models/17_zscore_baseline"}, {"name": "1D-CNN Autoencoder", "fam": "anomaly", "test_score": 90.1, "cv_f1": 93.6, "detection": 81.8, "false_alarm": 1.7, "class_acc": null, "flash_kib": 19.57, "ram_kib": 7.05, "infer_ms": 2.068, "macc": 59214.0, "train_s": 61.8, "deployed": true, "settings": "1D-CNN encoder–decoder", "note": "The best unsupervised detector (81.8% of faults) in only 20 KiB of flash.", "folder": "models/18_cnn_autoencoder"}, {"name": "MLP hybrid (multi-task)", "fam": "hybrid", "test_score": 97.1, "cv_f1": 96.7, "detection": 95.4, "false_alarm": 1.2, "class_acc": 97.0, "flash_kib": 191.56, "ram_kib": 10.59, "infer_ms": 1.576, "macc": 46025.0, "train_s": 31.0, "deployed": true, "settings": "Shared dense encoder → reconstruction + anomaly + 7-class heads", "note": "Best overall and the model in the final firmware: 1.2% false alarms, 1.58 ms, 96.2% agreement in the live test.", "folder": "models/19_mlp_hybrid"}, {"name": "TCN hybrid", "fam": "hybrid", "test_score": 96.6, "cv_f1": 91.8, "detection": 96.7, "false_alarm": 3.6, "class_acc": 97.5, "flash_kib": 111.48, "ram_kib": 41.45, "infer_ms": 16.793, "macc": 453509.0, "train_s": 55.0, "deployed": true, "settings": "Two causal residual TCN encoders, three heads", "note": "96.6% test score, but 16.8 ms per window and more false-alarm events live.", "folder": "models/20_tcn_hybrid"}, {"name": "1D-CNN hybrid", "fam": "hybrid", "test_score": 96.5, "cv_f1": 94.9, "detection": 95.2, "false_alarm": 2.2, "class_acc": 97.6, "flash_kib": 125.75, "ram_kib": 56.39, "infer_ms": 18.17, "macc": 464417.0, "train_s": 171.0, "deployed": true, "settings": "Two residual Conv1D encoders plus a context branch, three heads", "note": "Catches the early mechanical fault best in the live test; the slowest model (18.2 ms).", "folder": "models/21_cnn_hybrid"}, {"name": "LSTM hybrid", "fam": "hybrid", "test_score": 87.4, "cv_f1": 88.3, "detection": 99.3, "false_alarm": 24.5, "class_acc": 95.6, "flash_kib": 536.22, "ram_kib": 470.51, "infer_ms": 11.649, "macc": 139533.0, "train_s": 183.0, "deployed": true, "settings": "Two LSTM encoders, three heads", "note": "Highest fault detection (99.3%) but 24.5% false alarms; fills 95% of the board's SRAM.", "folder": "models/22_lstm_hybrid"}],
+  stats: {"files": [{"cls": "electrical_fault", "rows": 4370, "ramp": "1 s", "dir": "DIR0", "load": ""}, {"cls": "electrical_fault", "rows": 3898, "ramp": "1 s", "dir": "DIR1", "load": ""}, {"cls": "electrical_fault", "rows": 5408, "ramp": "0.5 s", "dir": "DIR0", "load": ""}, {"cls": "electrical_fault", "rows": 5384, "ramp": "0.5 s", "dir": "DIR1", "load": ""}, {"cls": "electrical_fault", "rows": 2139, "ramp": "0.2 s", "dir": "DIR0", "load": ""}, {"cls": "electrical_fault", "rows": 2158, "ramp": "0.2 s", "dir": "DIR1", "load": ""}, {"cls": "electrical_fault", "rows": 1076, "ramp": "0.1 s", "dir": "DIR0", "load": ""}, {"cls": "electrical_fault", "rows": 1070, "ramp": "0.1 s", "dir": "DIR1", "load": ""}, {"cls": "mechanical_fault", "rows": 814, "ramp": "1 s", "dir": "DIR1", "load": ""}, {"cls": "mechanical_fault", "rows": 1275, "ramp": "0.5 s", "dir": "DIR0", "load": ""}, {"cls": "mechanical_fault", "rows": 744, "ramp": "0.5 s", "dir": "DIR1", "load": ""}, {"cls": "mechanical_fault", "rows": 544, "ramp": "0.2 s", "dir": "DIR0", "load": ""}, {"cls": "mechanical_fault", "rows": 1747, "ramp": "1 s", "dir": "DIR0", "load": ""}, {"cls": "mechanical_fault", "rows": 1739, "ramp": "1 s", "dir": "DIR0", "load": ""}, {"cls": "mechanical_fault", "rows": 1707, "ramp": "1 s", "dir": "DIR1", "load": ""}, {"cls": "mechanical_fault", "rows": 949, "ramp": "0.5 s", "dir": "DIR0", "load": ""}, {"cls": "thermal_fault", "rows": 4681, "ramp": "1 s", "dir": "DIR0", "load": ""}, {"cls": "thermal_fault", "rows": 4011, "ramp": "1 s", "dir": "DIR1", "load": ""}, {"cls": "thermal_fault", "rows": 2335, "ramp": "1 s", "dir": "DIR0", "load": ""}, {"cls": "thermal_fault", "rows": 3512, "ramp": "1 s", "dir": "DIR1", "load": ""}, {"cls": "thermal_fault", "rows": 1753, "ramp": "0.5 s", "dir": "DIR0", "load": ""}, {"cls": "thermal_fault", "rows": 1480, "ramp": "0.2 s", "dir": "DIR0", "load": ""}, {"cls": "thermal_fault", "rows": 2198, "ramp": "0.2 s", "dir": "DIR1", "load": ""}, {"cls": "thermal_fault", "rows": 421, "ramp": "0.1 s", "dir": "DIR0", "load": ""}, {"cls": "motor_off", "rows": 11339, "ramp": "1 s", "dir": "DIR0", "load": ""}, {"cls": "motor_off", "rows": 11309, "ramp": "1 s", "dir": "DIR1", "load": ""}, {"cls": "motor_off", "rows": 5660, "ramp": "0.5 s", "dir": "DIR0", "load": ""}, {"cls": "motor_off", "rows": 5649, "ramp": "0.5 s", "dir": "DIR1", "load": ""}, {"cls": "motor_off", "rows": 2258, "ramp": "0.2 s", "dir": "DIR0", "load": ""}, {"cls": "motor_off", "rows": 2249, "ramp": "0.2 s", "dir": "DIR1", "load": ""}, {"cls": "motor_off", "rows": 1130, "ramp": "0.1 s", "dir": "DIR0", "load": ""}, {"cls": "motor_off", "rows": 1140, "ramp": "0.1 s", "dir": "DIR1", "load": ""}, {"cls": "normal", "rows": 2210, "ramp": "0.1 s", "dir": "DIR0/1", "load": "with load"}, {"cls": "normal", "rows": 4419, "ramp": "0.2 s", "dir": "DIR0/1", "load": "with load"}, {"cls": "normal", "rows": 11033, "ramp": "0.5 s", "dir": "DIR0/1", "load": "with load"}, {"cls": "normal", "rows": 22093, "ramp": "1 s", "dir": "DIR0/1", "load": "with load"}, {"cls": "normal", "rows": 2213, "ramp": "0.1 s", "dir": "DIR0/1", "load": "with load"}, {"cls": "normal", "rows": 4417, "ramp": "0.2 s", "dir": "DIR0/1", "load": "with load"}, {"cls": "normal", "rows": 11039, "ramp": "0.5 s", "dir": "DIR0/1", "load": "with load"}, {"cls": "normal", "rows": 22070, "ramp": "1 s", "dir": "DIR0/1", "load": "with load"}, {"cls": "normal", "rows": 2209, "ramp": "0.1 s", "dir": "DIR0/1", "load": "without load"}, {"cls": "normal", "rows": 4430, "ramp": "0.2 s", "dir": "DIR0/1", "load": "without load"}, {"cls": "normal", "rows": 11077, "ramp": "0.5 s", "dir": "DIR0/1", "load": "without load"}, {"cls": "normal", "rows": 22149, "ramp": "1 s", "dir": "DIR0/1", "load": "without load"}, {"cls": "turning_off", "rows": 4288, "ramp": "1 s", "dir": "DIR0", "load": ""}, {"cls": "turning_off", "rows": 3740, "ramp": "1 s", "dir": "DIR1", "load": ""}, {"cls": "turning_off", "rows": 2515, "ramp": "0.5 s", "dir": "DIR0", "load": ""}, {"cls": "turning_off", "rows": 1996, "ramp": "0.5 s", "dir": "DIR1", "load": ""}, {"cls": "turning_off", "rows": 775, "ramp": "0.2 s", "dir": "DIR0", "load": ""}, {"cls": "turning_off", "rows": 948, "ramp": "0.2 s", "dir": "DIR1", "load": ""}, {"cls": "turning_off", "rows": 344, "ramp": "0.1 s", "dir": "DIR0", "load": ""}, {"cls": "turning_off", "rows": 495, "ramp": "0.1 s", "dir": "DIR1", "load": ""}, {"cls": "turning_on", "rows": 1668, "ramp": "1 s", "dir": "DIR0", "load": ""}, {"cls": "turning_on", "rows": 2088, "ramp": "1 s", "dir": "DIR1", "load": ""}, {"cls": "turning_on", "rows": 1140, "ramp": "0.5 s", "dir": "DIR0", "load": ""}, {"cls": "turning_on", "rows": 1014, "ramp": "0.5 s", "dir": "DIR1", "load": ""}, {"cls": "turning_on", "rows": 735, "ramp": "0.2 s", "dir": "DIR0", "load": ""}, {"cls": "turning_on", "rows": 750, "ramp": "0.2 s", "dir": "DIR1", "load": ""}, {"cls": "turning_on", "rows": 714, "ramp": "0.1 s", "dir": "DIR0", "load": ""}, {"cls": "turning_on", "rows": 651, "ramp": "0.1 s", "dir": "DIR1", "load": ""}], "corr": [[1.0, 0.144, 0.042, 0.199, -0.013, 0.048, 0.061, -0.091, -0.038, 0.053, 0.082, 0.083, 0.028, -0.043], [0.144, 1.0, 0.475, 0.537, 0.213, -0.247, 0.568, -0.8, -0.45, 0.432, 0.687, 0.786, 0.684, 0.022], [0.042, 0.475, 1.0, 0.375, 0.818, -0.189, 0.231, -0.515, -0.267, 0.16, 0.287, 0.479, 0.309, 0.083], [0.199, 0.537, 0.375, 1.0, 0.157, 0.36, 0.295, -0.582, -0.317, 0.227, 0.39, 0.505, 0.353, -0.088], [-0.013, 0.213, 0.818, 0.157, 1.0, -0.112, 0.048, -0.272, -0.109, 0.016, 0.065, 0.238, 0.082, 0.115], [0.048, -0.247, -0.189, 0.36, -0.112, 1.0, -0.226, 0.167, 0.115, -0.175, -0.248, -0.224, -0.272, -0.055], [0.061, 0.568, 0.231, 0.295, 0.048, -0.226, 1.0, -0.488, 0.122, 0.932, 0.955, 0.824, 0.86, -0.008], [-0.091, -0.8, -0.515, -0.582, -0.272, 0.167, -0.488, 1.0, 0.664, -0.319, -0.663, -0.836, -0.748, 0.047], [-0.038, -0.45, -0.267, -0.317, -0.109, 0.115, 0.122, 0.664, 1.0, 0.327, -0.133, -0.341, -0.35, -0.031], [0.053, 0.432, 0.16, 0.227, 0.016, -0.175, 0.932, -0.319, 0.327, 1.0, 0.838, 0.658, 0.686, -0.075], [0.082, 0.687, 0.287, 0.39, 0.065, -0.248, 0.955, -0.663, -0.133, 0.838, 1.0, 0.888, 0.935, -0.032], [0.083, 0.786, 0.479, 0.505, 0.238, -0.224, 0.824, -0.836, -0.341, 0.658, 0.888, 1.0, 0.908, 0.101], [0.028, 0.684, 0.309, 0.353, 0.082, -0.272, 0.86, -0.748, -0.35, 0.686, 0.935, 0.908, 1.0, 0.016], [-0.043, 0.022, 0.083, -0.088, 0.115, -0.055, -0.008, 0.047, -0.031, -0.075, -0.032, 0.101, 0.016, 1.0]], "classmeans": [[-0.354, -1.32, -0.778, -1.901, -0.385, -0.765, -0.535, 1.1, 0.572, -0.403, -0.7, -0.957, -0.641, 0.089], [-0.333, 0.225, -0.736, -1.313, -0.374, -0.481, -0.395, 0.698, 0.427, -0.331, -0.54, -0.603, -0.456, 0.233], [-0.341, 0.064, 0.387, -0.133, 0.6, 0.946, -0.388, 0.323, 0.548, -0.402, -0.636, -0.233, -0.446, 0.745], [-0.228, 0.271, -0.049, 0.571, -0.141, 0.237, 0.098, -0.276, -0.26, 0.064, 0.196, 0.166, 0.186, -0.139], [-0.126, 0.201, 1.696, 0.515, 1.39, -0.104, -0.018, -0.472, -0.263, -0.044, 0.025, 0.346, 0.076, 0.062], [-0.294, 0.035, 0.052, 0.572, -0.07, 0.399, 0.977, -0.713, 0.214, 0.869, 0.782, 1.282, 0.709, 0.373], [2.732, 0.589, 0.074, 0.575, -0.092, 0.034, 0.517, -0.313, 0.053, 0.5, 0.526, 0.455, 0.293, -0.11]], "classes": ["motor_off", "turning_off", "turning_on", "normal", "electrical_fault", "mechanical_fault", "thermal_fault"], "features": ["T_slope_10s", "PWM", "Irms", "Vrms", "Current_Variance", "Current_Crest_Factor", "Vib_RMS", "Vib_Min", "Vib_Q1", "Vib_Median", "Vib_Q3", "Vib_Max", "Vib_Variance", "Vib_Skewness"], "total": 239367},
+  classNames: {motor_off:"Motor off", turning_off:"Turning off", turning_on:"Turning on", normal:"Normal", electrical_fault:"Electrical fault", mechanical_fault:"Mechanical fault", thermal_fault:"Thermal fault"},
+  classColors: {motor_off:"--d3", turning_off:"--d1", turning_on:"--d2", normal:"--ok", electrical_fault:"--f2", mechanical_fault:"--f3", thermal_fault:"--f0"},
+  findings: [
+    ["Key result","--ok","The multi-task hybrid wins on unseen data","One network with reconstruction, anomaly and 7-class heads reaches a 97.1% test score with 1.2% false alarms, in 1.58 ms and 10.6 KiB of RAM. It agreed with the reference model on 96.2% of windows in the live test.","models/19_mlp_hybrid"],
+    ["Lesson","--warn","Cross-validation alone is misleading","The decision tree, XGBoost and the GRU score 90–95% F1 in cross-validation but raise 16–25% false alarms on recordings they have never seen. Only testing on separate recordings revealed this.","results/model_comparison.csv"],
+    ["Baseline","--d0","Simple models are strong","Logistic regression reaches 96.4% in 0.21 ms, only 0.7 points behind the best model and 7× faster.","models/06_logistic_regression"],
+    ["Constraint","--bad","Memory rules out recurrent models","The LSTM hybrid needs 470 KiB of RAM, which is 95% of the board's SRAM in the firmware. The LSTM autoencoder needs 268 KiB. The MLP hybrid needs 10.6 KiB.","models/22_lstm_hybrid"],
+    ["Insight","--warn","Anomaly detectors are quiet but blind","Unsupervised models raise at most 1.7% false alarms but catch only 7–82% of faults, which is why the hybrid pairs an anomaly head with a classifier.","models/18_cnn_autoencoder"],
+    ["Deployment","--ink-3","2 of 22 models cannot run on the MCU","k-NN and LOF store the training set (353 KiB and 13 MiB) and need an operation X-CUBE-AI does not support. Every other model processes a window in at most 18 ms of the 150 ms budget.","models/04_knn"]
+  ],
+  timeline: [
+    ["Test bench","<b>Hardware.</b> STM32H573I-DK, DC775 brushed motor, BTS7960 driver, INA260, LIS3DH and DS18B20 sensors, with mechanical, electrical and thermal faults injected on purpose."],
+    ["Data","<b>60 sessions</b> recorded across 7 classes, 4 ramp speeds and 2 directions, with the features computed directly in the firmware so that training and deployment see identical inputs."],
+    ["Protocol","<b>One shared procedure</b> for all models: 30 × 14 windows, 5-fold StratifiedGroupKFold grouped by session, and the same 7 unseen test recordings."],
+    ["Models","<b>22 models in four families</b>: 6 classical, 5 neural networks, 7 anomaly detectors and 4 hybrid multi-task networks with reconstruction, anomaly and class heads."],
+    ["Deployment","<b>TFLite and ONNX export</b>, conversion with X-CUBE-AI, on-target validation, and measurement of flash, RAM, MACC and inference time on the Cortex-M33."],
+    ["Live test","<b>Hybrids run live on the bench</b> in a 7-task FreeRTOS firmware that streams decisions over UART and to a browser dashboard over Ethernet."]
+  ],
+  tree: [
+    ["projects/edge-ai-motor-monitoring/",""],
+    ["  README.md","overview, animated pipeline, clickable leaderboard"],
+    ["  models/","22 folders: notebook + plots + results page each"],
+    ["  results/model_comparison.csv","every metric, one row per model"],
+    ["  firmware/","STM32 application code (tasks, sensors, features, inference, web)"],
+    ["  dashboard/","screenshots of the live dashboard"],
+    ["  data/README.md","dataset description (raw data not published)"],
+    ["  tools/build_readme_visuals.py","regenerates every README chart from the CSV"],
+    ["docs/edge-ai-motor-monitoring/","this page and the firmware map (GitHub Pages)"]
+  ],
+  reproduce: "git clone https://github.com/Heet4226/machine-learning-portfolio.git\ncd machine-learning-portfolio/projects/edge-ai-motor-monitoring\npip install -r requirements.txt\njupyter lab models/19_mlp_hybrid/mlp_hybrid.ipynb   # needs recordings in data/, see data/README.md"
+};
+
+function init(){
+const $ = s => document.querySelector(s);
+const NS = "http://www.w3.org/2000/svg";
+function S(tag, attrs, parent){ const e=document.createElementNS(NS,tag); for(const k in attrs){ if(k==="text") e.textContent=attrs[k]; else e.setAttribute(k,attrs[k]); } if(parent) parent.appendChild(e); return e; }
+function H(tag, attrs, parent){ const e=document.createElement(tag); for(const k in attrs){ if(k==="html") e.innerHTML=attrs[k]; else if(k==="text") e.textContent=attrs[k]; else e.setAttribute(k,attrs[k]); } if(parent) parent.appendChild(e); return e; }
+const v = n => `var(${n})`;
+const tip = $("#tip");
+function showTip(e, html){ tip.innerHTML=html; tip.hidden=false; tip.style.left=Math.min(e.clientX+14, innerWidth-tip.offsetWidth-8)+"px"; tip.style.top=Math.min(e.clientY+14, innerHeight-tip.offsetHeight-8)+"px"; }
+const hideTip = () => tip.hidden=true;
+const pct = x => x==null?"–":x.toFixed(1)+"%";
+const ms = x => x==null?"–":(x<1?x.toFixed(3):x.toFixed(2))+" ms";
+const kib = x => x==null?"–":(x<10?x.toFixed(2):x.toFixed(1))+" KiB";
+const short = n => n.replace(/\s*\(.*?\)/,"");
+const ghUrl = p => `${CONFIG.repoUrl}/${/\.[a-z0-9]+$/i.test(p)?"blob":"tree"}/${CONFIG.branch||"main"}/${CONFIG.projectPath?CONFIG.projectPath+"/":""}${p.replace(/\/$/,"")}`;
+$("#lnkRepo").href = ghUrl("");
+
+const MODELS = CONFIG.models.map((m,i)=>Object.assign({i, n:i+1}, m, {deployed: m.deployed===true||m.deployed==="yes"}));
+const FAM = Object.fromEntries(CONFIG.families.map(f=>[f.id,f]));
+const best = MODELS.reduce((a,b)=>(b.test_score>a.test_score?b:a));
+
+/* masthead */
+const factsEl=$("#facts");
+CONFIG.facts.forEach(([b,s])=>{ const d=H("div",{class:"fact",role:"listitem"},factsEl); const bb=H("b",{text:b},d); H("span",{text:s},d); countUp(bb,b); });
+function countUp(el,str){ const m=str.match(/^([\d.]+)(.*)$/); if(!m) return; const T=parseFloat(m[1]), dec=(m[1].split(".")[1]||"").length, t0=performance.now();
+  (function st(t){ const k=Math.min(1,(t-t0)/1100), e=1-Math.pow(1-k,3); el.textContent=(T*e).toFixed(dec)+m[2]; if(k<1) requestAnimationFrame(st); })(t0); }
+$("#themeBtn").onclick=()=>{ const r=document.documentElement, dark=r.dataset.theme?r.dataset.theme==="dark":matchMedia("(prefers-color-scheme: dark)").matches; r.dataset.theme=dark?"light":"dark"; };
+
+/* ======================= 1 · pipeline ======================= */
+const map=$("#mapSvg"), NODES=[];
+const col=(items,x,w,h,top,bot)=>{ const n=items.length, gap=n>1?(bot-top-n*h)/(n-1):0; return items.map((it,k)=>Object.assign(it,{x,y:(n>1?top:(top+bot-h)/2)+k*(h+gap),w,h})); };
+const sensors=col([{id:"d0",title:"Current & voltage",sub:"INA260 · I²C · DMA",big:"200",unit:"Hz",color:"--d0"},{id:"d1",title:"Vibration",sub:"LIS3DH · SPI · DMA",big:"200",unit:"Hz",color:"--d1"},{id:"d2",title:"Temperature",sub:"DS18B20 · 1-Wire",big:"1.25",unit:"Hz",color:"--d2"},{id:"d3",title:"PWM command",sub:"BTS7960 H-bridge",big:"0–100",unit:"%",color:"--d3"}],16,180,100,50,530);
+const prep=col([{id:"p0",title:"Feature extraction",sub:"firmware · every 15 ms",val:"RMS · variance · quartiles",big:"14",unit:"features"},{id:"p1",title:"Sliding window",sub:"30 vectors · step 10",val:"450 ms of history",big:"30×14",unit:"input"},{id:"p2",title:"Session-wise CV",sub:"StratifiedGroupKFold",val:"no session leakage",big:"5",unit:"folds"}],262,180,110,70,490);
+const fams=col(CONFIG.families.map((f,i)=>({id:"m"+i,fam:f.id,title:f.name,sub:MODELS.filter(m=>m.fam===f.id).length+" models",color:f.color,kind:"model"})),508,220,100,40,530);
+const ev=col([{id:"e0",title:"Unseen recordings",sub:"7 test sessions",val:"detection · false alarms",big:"2,582",unit:"windows"},{id:"e1",title:"On-target (MCU)",sub:"X-CUBE-AI · Cortex-M33",val:"flash · RAM · latency",big:"20/22",unit:"deployed"}],794,180,120,130,440);
+const outs=col([{id:"o0",title:"Live dashboard",sub:"Ethernet · lwIP",val:"31 values / update",big:"150",unit:"ms"},{id:"o1",title:"UART stream",sub:"921,600 Bd CSV",val:"class · anomaly · error",big:"7",unit:"classes"},{id:"o2",title:"Best model",sub:short(best.name),val:"",big:best.test_score.toFixed(1)+"%",unit:"test score",color:"--ok"}],1040,184,125,50,505);
+[...sensors,...prep,...fams,...ev,...outs].forEach(n=>NODES.push(n));
+const N=Object.fromEntries(NODES.map(n=>[n.id,n]));
+[["SENSORS · 200 Hz",16],["ON-DEVICE PREPROCESSING",262],["MODELS · 22",508],["EVALUATION",794],["OUTPUTS",1040]].forEach(([t,x])=>S("text",{x,y:24,class:"colhead",text:t},map));
+const wireG=S("g",{},map), nodeG=S("g",{},map), dotG=S("g",{},map), WIRES={};
+function addWire(a,b,mode){ const A=N[a],B=N[b]; let d;
+  if(mode==="v"){ const x=A.x+A.w/2; d=`M${x} ${A.y+A.h} L${x} ${B.y}`; } else { const x1=A.x+A.w,y1=A.y+A.h/2,x2=B.x,y2=B.y+B.h/2,dx=(x2-x1)*.5; d=`M${x1} ${y1} C${x1+dx} ${y1} ${x2-dx} ${y2} ${x2} ${y2}`; }
+  const p=S("path",{d,class:"wire"},wireG); WIRES[a+"-"+b]={el:p,len:p.getTotalLength(),a,b}; }
+sensors.forEach(s=>addWire(s.id,"p0")); addWire("p0","p1","v"); addWire("p1","p2","v");
+fams.forEach(f=>{ addWire("p2",f.id); addWire(f.id,"e0"); }); addWire("e0","e1","v"); outs.forEach(o=>addWire("e1",o.id));
+NODES.forEach(n=>{
+  const g=S("g",{class:"node"},nodeG); n.g=g;
+  S("rect",{x:n.x,y:n.y,width:n.w,height:n.h,rx:8,class:"nbox"},g);
+  S("rect",{x:n.x,y:n.y+10,width:3,height:n.h-20,rx:1.5,style:`fill:${v(n.color||"--ink-3")}`},g);
+  n.glow=S("rect",{x:n.x-2,y:n.y-2,width:n.w+4,height:n.h+4,rx:10,class:"glow",style:`stroke:${v(n.color||"--ink-3")}`},g);
+  S("text",{x:n.x+14,y:n.y+23,class:"ntitle",text:n.title},g);
+  S("text",{x:n.x+14,y:n.y+39,class:"nsub",text:n.sub},g);
+  if(n.kind==="model"){
+    const ms_=MODELS.filter(m=>m.fam===n.fam); n.leds=[];
+    ms_.forEach((m,k)=>{ const c=S("circle",{cx:n.x+20+k*19,cy:n.y+60,r:6.5,class:"led",style:`fill:${v("--rule-2")};cursor:pointer`},g); n.leds.push(c);
+      c.addEventListener("mousemove",e=>showTip(e,`${m.name}<br>test score ${pct(m.test_score)}${m.deployed?" · "+ms(m.infer_ms):" · not deployable"}`)); c.addEventListener("mouseleave",hideTip);
+      c.addEventListener("click",()=>{ selected=m.i; drawLB(); drawCard(); $("#mCard").scrollIntoView({behavior:"smooth",block:"center"}); }); });
+    const bf=ms_.reduce((a,b)=>b.test_score>a.test_score?b:a);
+    S("text",{x:n.x+n.w-12,y:n.y+n.h-12,class:"nval","text-anchor":"end",text:`best ${pct(bf.test_score)}`},g);
+  } else {
+    if(n.val) S("text",{x:n.x+14,y:n.y+56,class:"nval",text:n.val},g);
+    const t=S("text",{x:n.x+14,y:n.y+n.h-16,class:"nbig",text:n.big},g);
+    S("tspan",{class:"nval",dx:7,style:"font-weight:400;font-stretch:100%",text:n.unit},t);  /* flows after the number, so no overlap even before web fonts load */
+  }
+});
+let speed=1, playing=true, batches=0, scene=-1, last=performance.now(), acc=0;
+const dots=[];
+function spawn(){ const di=Math.floor(Math.random()*4), fi=Math.floor(Math.random()*fams.length), oi=Math.floor(Math.random()*3);
+  const route=[`d${di}-p0`,"p0-p1","p1-p2",`p2-m${fi}`,`m${fi}-e0`,"e0-e1",`e1-o${oi}`];
+  dots.push({route,seg:0,s:0,el:S("circle",{r:4.2,class:"dot",style:`fill:${v(sensors[di].color)}`},dotG)}); }
+function tick(t){
+  const dt=Math.min(.05,(t-last)/1000); last=t;
+  if(playing){ acc+=dt*speed; while(acc>.3){ acc-=.3; spawn(); }
+    for(let k=dots.length-1;k>=0;k--){ const d=dots[k], w=WIRES[d.route[d.seg]]; d.s+=dt*speed*230;
+      if(d.s>=w.len){ const n=N[w.b]; n.flash=1;
+        if(n.kind==="model"){ const led=n.leds[Math.floor(Math.random()*n.leds.length)]; led.style.fill=v(n.color); setTimeout(()=>led.style.fill=v("--rule-2"),500/speed); d.el.style.fill=v(n.color); }
+        d.s-=w.len; d.seg++;
+        if(d.seg>=d.route.length){ d.el.remove(); dots.splice(k,1); batches++; $("#batchCt").textContent=batches.toLocaleString(); continue; } }
+      const w2=WIRES[d.route[d.seg]], p=w2.el.getPointAtLength(Math.min(d.s,w2.len)); d.el.setAttribute("cx",p.x); d.el.setAttribute("cy",p.y);
+      d.el.style.opacity=(scene>=0&&!(SCENES[scene].ids.includes(w2.a)||SCENES[scene].ids.includes(w2.b)))?.15:1; } }
+  NODES.forEach(n=>{ if(n.flash>0){ n.flash=Math.max(0,n.flash-dt*2.2); n.glow.style.opacity=n.flash; } });
+  requestAnimationFrame(tick);
+}
+requestAnimationFrame(tick);
+$("#playBtn").onclick=e=>{ playing=!playing; e.currentTarget.textContent=playing?"Pause":"Play"; };
+$("#speedSeg").querySelectorAll("button").forEach(b=>b.onclick=()=>{ speed=+b.dataset.v; $("#speedSeg").querySelectorAll("button").forEach(x=>x.setAttribute("aria-pressed",x===b)); });
+const SCENES=[
+  {ids:["d0","d1","d2","d3"],title:"Four signals at 200 Hz",text:"An INA260 measures motor current and voltage, an LIS3DH measures vibration, and a DS18B20 measures temperature. The PWM command adds the operating point. All drivers use DMA, so sampling never blocks the CPU."},
+  {ids:["p0"],title:"14 features, computed on the MCU",text:"Every 15 ms the firmware condenses the raw samples into 14 numbers: temperature slope, PWM, RMS current and voltage, current variance and crest factor, and seven vibration statistics. Training used the exact same features the device computes."},
+  {ids:["p1"],title:"A 450 ms window",text:"30 consecutive feature vectors form one 30 × 14 input. A new window starts every 10 vectors, so the system makes a new decision every 150 ms."},
+  {ids:["p2"],title:"Leakage-free validation",text:"5-fold StratifiedGroupKFold grouped by recording session: windows from one session never appear in both training and validation, which would inflate the scores."},
+  {ids:fams.map(f=>f.id),title:"22 models, four families",text:"6 classical models, 5 neural networks, 7 anomaly detectors trained on normal data only, and 4 hybrid multi-task networks that reconstruct the window, score anomalies and classify all at once. Click a lamp to open that model."},
+  {ids:["e0","e1"],title:"Scored twice: unseen data and real hardware",text:"Each model is tested on 7 separate recordings (fault detection and false alarms), then converted with X-CUBE-AI and measured on the Cortex-M33 for flash, RAM, operations and latency. 20 of 22 models fit."},
+  {ids:["o0","o1","o2"],title:"Running live",text:`The firmware streams each decision over UART and serves a live browser dashboard over Ethernet. The deployed model is the ${short(best.name)}: ${pct(best.test_score)} on unseen data in ${ms(best.infer_ms)}.`}
+];
+function setScene(i){ scene=i; const on=i>=0; $("#capNav").hidden=!on;
+  if(!on){ $("#capStep").textContent="FREE RUN"; $("#capTitle").textContent="Everything at once"; $("#capText").textContent="All stages run continuously. Start the guided tour to follow one window from the sensors to the decision."; }
+  else { const s=SCENES[i]; $("#capStep").textContent=`STEP ${i+1} / ${SCENES.length}`; $("#capTitle").textContent=s.title; $("#capText").textContent=s.text; $("#capProg").style.width=((i+1)/SCENES.length*100)+"%"; $("#prevScene").disabled=i===0; $("#nextScene").textContent=i===SCENES.length-1?"Finish":"Next ▶"; }
+  NODES.forEach(n=>n.g.classList.toggle("dim",on&&!SCENES[i].ids.includes(n.id)));
+  Object.values(WIRES).forEach(w=>w.el.classList.toggle("dim",on&&!(SCENES[i].ids.includes(w.a)||SCENES[i].ids.includes(w.b)))); }
+$("#tourBtn").onclick=()=>setScene(0); $("#prevScene").onclick=()=>setScene(Math.max(0,scene-1)); $("#nextScene").onclick=()=>setScene(scene+1>=SCENES.length?-1:scene+1); $("#endTour").onclick=()=>setScene(-1);
+
+/* ======================= 2 · leaderboard ======================= */
+const METRICS=[
+  {id:"test_score",name:"Test score",better:"higher",fmt:pct,max:100},
+  {id:"cv_f1",name:"CV F1",better:"higher",fmt:pct,max:100},
+  {id:"detection",name:"Detection",better:"higher",fmt:pct,max:100},
+  {id:"false_alarm",name:"False alarms",better:"lower",fmt:pct},
+  {id:"infer_ms",name:"Inference",better:"lower",fmt:ms},
+  {id:"flash_kib",name:"Flash",better:"lower",fmt:kib}
+];
+let metric=METRICS[0], famFilter="all", selected=best.i;
+const mSeg=$("#metricSeg"), fSeg=$("#famSeg");
+METRICS.forEach(m=>{ const b=H("button",{type:"button","aria-pressed":m===metric,text:m.name},mSeg); b.onclick=()=>{ metric=m; mSeg.querySelectorAll("button").forEach(x=>x.setAttribute("aria-pressed",x===b)); drawLB(); }; });
+[{id:"all",name:"All"}].concat(CONFIG.families).forEach(f=>{ const b=H("button",{type:"button","aria-pressed":f.id==="all"},fSeg); if(f.color) H("i",{style:`background:${v(f.color)}`},b); b.append(f.name); b.onclick=()=>{ famFilter=f.id; fSeg.querySelectorAll("button").forEach(x=>x.setAttribute("aria-pressed",x===b)); drawLB(); }; });
+function drawLB(){
+  const svg=$("#lbSvg"); svg.innerHTML="";
+  const has=MODELS.filter(m=>(famFilter==="all"||m.fam===famFilter));
+  const list=has.slice().sort((a,b)=>{ const A=a[metric.id], B=b[metric.id]; if(A==null) return 1; if(B==null) return -1; return metric.better==="higher"?B-A:A-B; });
+  const W=760,rowH=26,top=34,L=200,Rr=90,H_=top+list.length*rowH+12; svg.setAttribute("viewBox",`0 0 ${W} ${H_}`);
+  const vals=MODELS.map(m=>m[metric.id]).filter(x=>x!=null), max=metric.max||Math.max(...vals)*1.02;
+  const useLog=metric.id==="infer_ms"||metric.id==="flash_kib", lmin=useLog?Math.log10(Math.min(...vals)/1.5):0, lmax=useLog?Math.log10(max):0;
+  const x=val=>useLog? L+(W-L-Rr)*(Math.log10(val)-lmin)/(lmax-lmin) : L+(W-L-Rr)*val/max;
+  S("text",{x:L,y:18,class:"tl",text:`${metric.name.toUpperCase()} · ${metric.better} is better${useLog?" · log scale":""}`},svg);
+  list.forEach((m,k)=>{ const y=top+k*rowH, val=m[metric.id], g=S("g",{class:"bar-row",tabindex:0,role:"button","aria-label":`${m.name}, ${metric.name} ${metric.fmt(val)}`},svg);
+    S("rect",{x:0,y,width:W,height:rowH,style:`fill:${m.i===selected?v("--rule-2"):"transparent"}`},g);
+    S("text",{x:8,y:y+17,class:"tl",text:String(k+1).padStart(2,"0")},g);
+    S("text",{x:34,y:y+17,class:"tlab",text:m.name,style:m===best?"font-weight:600":""},g);
+    if(val!=null){ const bw=Math.max(2,x(val)-L), bar=S("rect",{x:L,y:y+6,width:0,height:rowH-12,rx:3,style:`fill:${v(FAM[m.fam].color)};transition:width .6s cubic-bezier(.2,.7,.2,1) ${k*18}ms`},g);
+      requestAnimationFrame(()=>requestAnimationFrame(()=>bar.setAttribute("width",bw)));
+      S("text",{x:L+bw+8,y:y+17,class:"tval",text:metric.fmt(val)+(m===best?"  ★":"")},g); }
+    else S("text",{x:L,y:y+17,class:"tl",text:"not deployable on the MCU"},g);
+    const go=()=>{ selected=m.i; drawLB(); drawCard(); }; g.addEventListener("click",go); g.addEventListener("keydown",e=>{ if(e.key==="Enter"||e.key===" "){ e.preventDefault(); go(); } }); });
+}
+function drawCard(){
+  const m=MODELS[selected], f=FAM[m.fam], c=$("#mCard"), rank=MODELS.slice().sort((a,b)=>b.test_score-a.test_score).indexOf(m)+1;
+  c.innerHTML=`<header><i class="sq" style="background:${v(f.color)}"></i><h3>${m.name}</h3><span class="prio">#${rank} of ${MODELS.length}</span><div class="fn"><a href="${ghUrl(m.folder)}" target="_blank" rel="noopener">${m.folder}/</a></div></header>
+  <div class="kv"><div><span>Test score</span><b>${pct(m.test_score)}</b></div><div><span>False alarms</span><b>${pct(m.false_alarm)}</b></div><div><span>Inference</span><b>${ms(m.infer_ms)}</b></div><div><span>Flash</span><b>${kib(m.flash_kib)}</b></div></div>
+  <div><div class="lbl" style="margin-bottom:6px">Fault detection ${pct(m.detection)} · CV macro F1 ${pct(m.cv_f1)}</div><div class="meter"><i style="width:${m.detection||0}%;background:${v(f.color)}"></i></div></div>
+  <div class="io"><span>Family</span><div>${f.name}</div><span>Model</span><div>${m.settings}</div><span>MCU</span><div>${m.deployed?`<span class="pill" style="color:${v("--ok")}">runs on STM32H573</span> RAM ${kib(m.ram_kib)}${m.macc?` · ${m.macc.toLocaleString()} MACC`:""}`:`<span class="pill" style="color:${v("--bad")}">not deployable</span>`}</div>${m.class_acc!=null?`<span>Class acc.</span><div>${pct(m.class_acc)} on unseen recordings</div>`:""}</div>
+  <p>${m.note}</p>
+  <div class="bar"><a class="btn primary" href="${ghUrl(m.folder)}" target="_blank" rel="noopener">Open notebook &amp; results ↗</a><a class="btn" href="${ghUrl("results/model_comparison.csv")}" target="_blank" rel="noopener">All metrics (CSV)</a></div>`;
+}
+drawLB(); drawCard();
+
+/* ======================= 3 · trade-off ======================= */
+const COSTS=[{id:"infer_ms",name:"Inference time",fmt:ms},{id:"flash_kib",name:"Flash",fmt:kib},{id:"ram_kib",name:"RAM",fmt:kib}];
+let cost=COSTS[0]; const cSeg=$("#costSeg");
+COSTS.forEach(c=>{ const b=H("button",{type:"button","aria-pressed":c===cost,text:c.name},cSeg); b.onclick=()=>{ cost=c; cSeg.querySelectorAll("button").forEach(x=>x.setAttribute("aria-pressed",x===b)); drawSc(); }; });
+function drawSc(){
+  const svg=$("#scSvg"); svg.innerHTML=""; const W=1240,Hh=420,l=70,r=40,t=24,b=50;
+  const D=MODELS.filter(m=>m.deployed&&m[cost.id]!=null), lx=Math.log10;
+  const cmin=Math.min(...D.map(m=>m[cost.id]))/1.8, cmax=Math.max(...D.map(m=>m[cost.id]))*1.8, ymin=45, ymax=100;
+  const X=s=>l+(W-l-r)*(lx(s)-lx(cmin))/(lx(cmax)-lx(cmin)), Y=q=>t+(Hh-t-b)*(1-(q-ymin)/(ymax-ymin));
+  for(let e=-3;e<=4;e++) [1,3].forEach(k=>{ const s=k*Math.pow(10,e); if(s<cmin||s>cmax) return; S("line",{x1:X(s),x2:X(s),y1:t,y2:Hh-b,class:"grid"},svg); S("text",{x:X(s),y:Hh-b+18,class:"tl","text-anchor":"middle",text:cost.fmt(s)},svg); });
+  for(let q=50;q<=100;q+=10){ S("line",{x1:l,x2:W-r,y1:Y(q),y2:Y(q),class:"grid"},svg); S("text",{x:l-10,y:Y(q)+4,class:"tl","text-anchor":"end",text:q+"%"},svg); }
+  S("text",{x:(l+W-r)/2,y:Hh-10,class:"tl","text-anchor":"middle",text:`${cost.name.toUpperCase()} ON THE STM32 (log scale) →`},svg); S("text",{x:16,y:t+4,class:"tl",text:"↑ TEST"},svg);
+  const sorted=D.slice().sort((a,b)=>a[cost.id]-b[cost.id]); let bs=-1; const front=[]; sorted.forEach(m=>{ if(m.test_score>bs){ front.push(m); bs=m.test_score; } });
+  let d=""; front.forEach((m,k)=>{ d+=k===0?`M${X(m[cost.id])} ${Y(m.test_score)}`:` H${X(m[cost.id])} V${Y(m.test_score)}`; });
+  S("path",{d,fill:"none",style:`stroke:${v("--ink-2")};stroke-width:1.5;stroke-dasharray:5 4`},svg);
+  const placed=[];
+  D.forEach(m=>{ const onF=front.includes(m), g=S("g",{style:"cursor:pointer"},svg), cx=X(m[cost.id]), cy=Y(m.test_score);
+    S("circle",{cx,cy,r:onF?8:6,style:`fill:${v(FAM[m.fam].color)};stroke:${v("--panel")};stroke-width:2`},g);
+    const lx_=cx+11, ly=cy-9; if((onF||m===best)&&!placed.some(p=>Math.abs(p[0]-lx_)<120&&Math.abs(p[1]-ly)<15)){ placed.push([lx_,ly]); S("text",{x:lx_,y:ly,class:"tval",text:short(m.name)},g); }
+    g.addEventListener("mousemove",e=>showTip(e,`<b>${m.name}</b><br>test score ${pct(m.test_score)} · false alarms ${pct(m.false_alarm)}<br>${cost.name.toLowerCase()} ${cost.fmt(m[cost.id])}${onF?"<br>on the Pareto front":""}`)); g.addEventListener("mouseleave",hideTip);
+    g.addEventListener("click",()=>{ selected=m.i; drawLB(); drawCard(); $("#models").scrollIntoView({behavior:"smooth"}); }); });
+}
+drawSc();
+const lg=$("#scLegend"); CONFIG.families.forEach(f=>{ const s=H("span",{class:"note",style:"display:inline-flex;align-items:center;gap:6px"},lg); H("i",{style:`width:10px;height:10px;border-radius:50%;background:${v(f.color)};display:inline-block`},s); s.append(f.name); }); H("span",{class:"note",text:"· click a dot to open its model card"},lg);
+
+/* ======================= 4 · dataset ======================= */
+const ST=CONFIG.stats, FILES=ST.files, maxRows=Math.max(...FILES.map(f=>f.rows)), CN=CONFIG.classNames, CC=CONFIG.classColors;
+const dsum=$("#dsum");
+ST.classes.forEach(c=>{ const fs=FILES.filter(f=>f.cls===c), rows=fs.reduce((a,f)=>a+f.rows,0); const d=H("div",{style:`border-color:${v(CC[c])}`},dsum); H("b",{text:fs.length},d); H("span",{text:`${CN[c]} · ${(rows/1000).toFixed(rows<10000?1:0)}k vectors`},d); });
+let dF="all"; const dSeg=$("#dataSeg"), tiles=$("#tiles"), info=$("#fileInfo");
+[{id:"all"}].concat(ST.classes.map(c=>({id:c}))).forEach(g=>{ const b=H("button",{type:"button","aria-pressed":g.id==="all"},dSeg); if(g.id!=="all") H("i",{style:`background:${v(CC[g.id])}`},b); b.append(g.id==="all"?"All 60":CN[g.id]);
+  b.onclick=()=>{ dF=g.id; dSeg.querySelectorAll("button").forEach(x=>x.setAttribute("aria-pressed",x===b)); tiles.querySelectorAll(".tile").forEach((t,i)=>t.classList.toggle("off",dF!=="all"&&FILES[i].cls!==dF)); }; });
+FILES.forEach((f,i)=>{ const t=H("button",{class:"tile",type:"button","aria-label":f.name},tiles);
+  H("span",{text:String(i+1).padStart(2,"0"),style:`color:${v(CC[f.cls])};font-weight:600`},t);
+  const b=H("span",{class:"b"},t); H("i",{style:`width:${Math.max(4,f.rows/maxRows*100)}%;background:${v(CC[f.cls])}`},b);
+  const show=()=>{ info.innerHTML=`<b>${CN[f.cls]}</b> · session ${String(i+1).padStart(2,"0")} · ${f.rows.toLocaleString()} feature vectors${f.ramp?` · ramp ${f.ramp}`:""} · ${f.dir}${f.load?` · ${f.load}`:""}`; };
+  t.addEventListener("mouseenter",show); t.addEventListener("focus",show); t.addEventListener("click",()=>{ tiles.querySelectorAll(".tile").forEach(x=>x.classList.remove("sel")); t.classList.add("sel"); show(); }); });
+
+/* ======================= 5 · features ======================= */
+function heat(svgSel, rowsL, colsL, M, opts){
+  const svg=$(svgSel), cs=opts.cs||28, l=opts.l||150, t=44, W=l+colsL.length*cs+20, Hh=t+rowsL.length*cs+50, lim=opts.lim||1;
+  svg.setAttribute("viewBox",`0 0 ${W} ${Hh}`); S("text",{x:l,y:18,class:"tl",text:opts.title},svg);
+  rowsL.forEach((r,i)=>S("text",{x:l-8,y:t+i*cs+cs/2+4,class:"tl","text-anchor":"end",text:r},svg));
+  colsL.forEach((c,j)=>S("text",{x:l+j*cs+cs/2,y:t-8,class:"tl","text-anchor":"middle",text:j+1},svg));
+  rowsL.forEach((r,i)=>colsL.forEach((c,j)=>{ const val=M[i][j], p=Math.round(Math.min(1,Math.abs(val)/lim)*85);
+    const rc=S("rect",{x:l+j*cs+1,y:t+i*cs+1,width:cs-2,height:cs-2,rx:3,style:`fill:color-mix(in oklab, ${v(val>=0?"--pos":"--neg")} ${p}%, ${v("--panel")});opacity:0;transition:opacity .4s ${(i+j)*15}ms`},svg);
+    requestAnimationFrame(()=>requestAnimationFrame(()=>rc.style.opacity=1));
+    rc.addEventListener("mousemove",e=>showTip(e,opts.tip(r,c,val))); rc.addEventListener("mouseleave",hideTip); }));
+  const ly=t+rowsL.length*cs+18; for(let k=0;k<=20;k++){ const c=-1+k*.1; S("rect",{x:l+k*12,y:ly,width:12,height:10,style:`fill:color-mix(in oklab, ${v(c>=0?"--pos":"--neg")} ${Math.round(Math.abs(c)*85)}%, ${v("--panel")})`},svg); }
+  S("text",{x:l,y:ly+24,class:"tl",text:"−"+lim},svg); S("text",{x:l+126,y:ly+24,class:"tl","text-anchor":"middle",text:"0"},svg); S("text",{x:l+252,y:ly+24,class:"tl","text-anchor":"end",text:"+"+lim},svg);
+}
+const F=ST.features;
+heat("#hmSvg",F,F,ST.corr,{title:"PEARSON CORRELATION · columns use the same order",tip:(a,b,x)=>`${a} × ${b}<br>r = ${x.toFixed(2)}`});
+heat("#cpSvg",ST.classes.map(c=>CN[c]),F,ST.classmeans,{cs:30,l:120,lim:2,title:"CLASS PROFILE · mean z-score per feature (1–14 as on the left)",tip:(a,b,x)=>`${a}<br>${b}: ${x>=0?"+":""}${x.toFixed(2)} σ`});
+
+/* ======================= 6–8 ======================= */
+CONFIG.findings.forEach(([tag,colr,h,p,where])=>{ const d=H("article",{class:"find"},$("#finds")); const hd=H("header",{},d); H("span",{class:"sev",text:tag,style:`color:${v(colr)}`},hd); H("h3",{text:h},hd); H("p",{text:p},d); const a=H("a",{class:"where",href:ghUrl(where),target:"_blank",rel:"noopener",text:where+" ↗"},d); });
+CONFIG.timeline.forEach(([w,t])=>{ const li=H("li",{},$("#boot")); H("div",{class:"when",text:w},li); H("div",{class:"what",html:t},li); });
+const pad=Math.max(...CONFIG.tree.map(r=>r[0].length))+3;
+$("#tree").innerHTML=CONFIG.tree.map(([p,c])=>`<span class="n">${p}</span>${c?" ".repeat(pad-p.length)+`<span class="c"># ${c}</span>`:""}`).join("\n");
+$("#cmdText").textContent=CONFIG.reproduce;
+$("#copyBtn").onclick=async e=>{ const b=e.currentTarget; try{ await navigator.clipboard.writeText(CONFIG.reproduce); b.textContent="Copied"; }catch(_){ b.textContent="Select & copy"; } setTimeout(()=>b.textContent="Copy",1600); };
+}
+fetch("viz_data.json",{cache:"no-store"}).then(r=>r.ok?r.json():null).then(d=>{ if(d) Object.assign(CONFIG,d); }).catch(()=>{}).finally(init);
+</script>
+</body>
+</html>

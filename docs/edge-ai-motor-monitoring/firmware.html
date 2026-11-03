@@ -1,0 +1,1203 @@
+﻿<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Firmware map · Edge AI Motor Condition Monitoring</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap">
+<style>
+/* Layout: a datasheet in chapters down one 1240px column; the two live instruments (system map, scheduler trace) run the full column width. */
+:root{
+  --paper:#F2F5F7; --panel:#FFFFFF; --ink:#13202A; --ink-2:#52616D; --ink-3:#7C8A95;
+  --rule:#D3DCE2; --rule-2:#E6ECF0; --hi:#13202A; --on-hi:#FFFFFF;
+  --c-motor:#C93A4E; --c-cur:#BF7A10; --c-vib:#7A49C6; --c-dp:#2268BB; --c-ai:#0B8A82; --c-temp:#4F8A1E; --c-eth:#677785; --c-isr:#33414C; --c-idle:#B5C1CA;
+  --ok:#1C8248; --warn:#A86E12; --bad:#BD3128;
+  --neg:#2F6FB5; --pos:#C2452D;
+  --f-display:'Archivo','Arial Narrow',Arial,sans-serif;
+  --f-body:'IBM Plex Sans',system-ui,-apple-system,'Segoe UI',sans-serif;
+  --f-mono:'IBM Plex Mono',ui-monospace,'SFMono-Regular',Menlo,Consolas,monospace;
+  --s-1:4px; --s-2:8px; --s-3:12px; --s-4:16px; --s-5:24px; --s-6:36px; --s-7:56px;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --paper:#0C1318; --panel:#121C23; --ink:#E1E8ED; --ink-2:#97A7B3; --ink-3:#6D7E8A;
+  --rule:#26343E; --rule-2:#1A252D; --hi:#E1E8ED; --on-hi:#0C1318;
+  --c-motor:#F06B7C; --c-cur:#EDAE47; --c-vib:#A984EE; --c-dp:#5C9EEA; --c-ai:#2EC4B8; --c-temp:#8DC453; --c-eth:#95A5B3; --c-isr:#C5D0D8; --c-idle:#34434E;
+  --ok:#4CC27E; --warn:#E5A63A; --bad:#F06A5F; --neg:#5E9BE0; --pos:#EE7A5E;
+  color-scheme:dark }}
+:root[data-theme="dark"]{
+  --paper:#0C1318; --panel:#121C23; --ink:#E1E8ED; --ink-2:#97A7B3; --ink-3:#6D7E8A;
+  --rule:#26343E; --rule-2:#1A252D; --hi:#E1E8ED; --on-hi:#0C1318;
+  --c-motor:#F06B7C; --c-cur:#EDAE47; --c-vib:#A984EE; --c-dp:#5C9EEA; --c-ai:#2EC4B8; --c-temp:#8DC453; --c-eth:#95A5B3; --c-isr:#C5D0D8; --c-idle:#34434E;
+  --ok:#4CC27E; --warn:#E5A63A; --bad:#F06A5F; --neg:#5E9BE0; --pos:#EE7A5E;
+  color-scheme:dark }
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{background:var(--paper);color:var(--ink);font-family:var(--f-body);font-size:15.5px;line-height:1.55;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:0 var(--s-7)}
+.wrap{max-width:1240px;margin:0 auto}
+h1,h2,h3{font-family:var(--f-display);text-wrap:balance;margin:0;letter-spacing:-.01em}
+h1{font-size:clamp(34px,5.2vw,60px);font-weight:800;font-stretch:78%;line-height:1}
+h2{font-size:clamp(24px,3vw,32px);font-weight:750;font-stretch:82%;line-height:1.1}
+h3{font-size:17px;font-weight:700;font-stretch:90%}
+p{margin:0}
+code,.mono{font-family:var(--f-mono);font-size:.88em}
+.eyebrow{font-family:var(--f-mono);font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3)}
+.lede{max-width:68ch;color:var(--ink-2);font-size:17px}
+.prose{max-width:70ch;color:var(--ink-2)}
+.prose b,.lede b{color:var(--ink);font-weight:600}
+a{color:inherit}
+
+/* masthead */
+.mast{padding-block:var(--s-7) var(--s-6);display:grid;gap:var(--s-4)}
+.facts{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));border-top:1px solid var(--rule);border-bottom:1px solid var(--rule);margin-top:var(--s-3)}
+.fact{padding:var(--s-3) var(--s-3) var(--s-3) 0;display:grid;gap:2px;min-width:0}
+.fact+.fact{padding-left:var(--s-3);border-left:1px solid var(--rule-2)}
+.fact b{font-family:var(--f-display);font-weight:750;font-stretch:85%;font-size:24px;font-variant-numeric:tabular-nums;line-height:1.1}
+.fact span{font-size:12.5px;color:var(--ink-2);line-height:1.35}
+@media (max-width:900px){.facts{grid-template-columns:repeat(3,minmax(0,1fr))}.fact:nth-child(4){border-left:0;padding-left:0}.fact:nth-child(n+4){border-top:1px solid var(--rule-2)}}
+@media (max-width:520px){.facts{grid-template-columns:repeat(2,minmax(0,1fr))}.fact:nth-child(odd){border-left:0;padding-left:0}.fact:nth-child(4){border-left:1px solid var(--rule-2);padding-left:var(--s-3)}.fact:nth-child(n+3){border-top:1px solid var(--rule-2)}}
+
+section{padding-block:var(--s-6);border-top:1px solid var(--rule);display:grid;gap:var(--s-4)}
+.sechead{display:grid;gap:var(--s-2)}
+
+/* instrument controls */
+.bar{display:flex;flex-wrap:wrap;gap:var(--s-2) var(--s-3);align-items:center}
+.btn{font:600 13px var(--f-body);border:1px solid var(--rule);background:var(--panel);color:var(--ink);border-radius:6px;padding:7px 12px;cursor:pointer;display:inline-flex;gap:6px;align-items:center;min-height:34px}
+.btn:hover{border-color:var(--ink-3)}
+.btn.primary{background:var(--hi);color:var(--on-hi);border-color:var(--hi)}
+.btn:focus-visible,.seg button:focus-visible,select:focus-visible{outline:2px solid var(--c-dp);outline-offset:2px}
+.seg{display:inline-flex;border:1px solid var(--rule);border-radius:6px;overflow:hidden;background:var(--panel)}
+.seg button{font:500 12.5px var(--f-mono);border:0;background:transparent;color:var(--ink-2);padding:7px 10px;cursor:pointer;min-height:32px}
+.seg button+button{border-left:1px solid var(--rule)}
+.seg button[aria-pressed="true"]{background:var(--hi);color:var(--on-hi)}
+.lbl{font:500 11.5px var(--f-mono);color:var(--ink-3);letter-spacing:.04em;text-transform:uppercase}
+select{font:500 13px var(--f-body);border:1px solid var(--rule);background:var(--panel);color:var(--ink);border-radius:6px;padding:6px 8px;min-height:34px}
+.clock{font:500 13px var(--f-mono);font-variant-numeric:tabular-nums;color:var(--ink-2);margin-left:auto}
+.clock b{color:var(--ink);font-weight:600}
+.note{font-size:12.5px;color:var(--ink-3)}
+
+.caption{display:grid;grid-template-columns:auto 1fr;gap:var(--s-2) var(--s-4);align-items:start;background:var(--panel);border:1px solid var(--rule);border-radius:10px;padding:var(--s-3) var(--s-4)}
+.caption .step{font:600 12px var(--f-mono);color:var(--ink-3);padding-top:3px;white-space:nowrap}
+.caption h3{margin-bottom:2px}
+.caption p{color:var(--ink-2);max-width:95ch;font-size:14.5px}
+.caption .nav{grid-column:1/-1;display:flex;gap:var(--s-2);flex-wrap:wrap;align-items:center}
+.prog{flex:1;min-width:120px;height:3px;background:var(--rule-2);border-radius:2px;overflow:hidden}
+.prog i{display:block;height:100%;width:0;background:var(--ink-2)}
+
+.scroller{overflow-x:auto;-webkit-overflow-scrolling:touch;border:1px solid var(--rule);border-radius:10px;background:var(--panel)}
+#map svg{display:block;width:100%;min-width:980px;height:auto}
+/* svg styling */
+.nbox{fill:var(--panel);stroke:var(--rule);stroke-width:1.2}
+.nbox.soft{fill:var(--paper)}
+.glow{fill:none;stroke-width:2.5;opacity:0}
+.ntitle{font-family:var(--f-display);font-weight:700;font-stretch:88%;font-size:14.5px;fill:var(--ink)}
+.nsub{font-family:var(--f-mono);font-size:10.5px;fill:var(--ink-3)}
+.nval{font-family:var(--f-mono);font-size:11.5px;fill:var(--ink);font-variant-numeric:tabular-nums}
+.nbig{font-family:var(--f-display);font-weight:750;font-stretch:85%;font-size:24px;fill:var(--ink);font-variant-numeric:tabular-nums}
+.pchip{font-family:var(--f-mono);font-size:10px;fill:var(--ink-2)}
+.wire{fill:none;stroke:var(--rule);stroke-width:1.6}
+.wire.dash{stroke-dasharray:4 4}
+.wlabel{font-family:var(--f-mono);font-size:9.5px;fill:var(--ink-3)}
+.colhead{font-family:var(--f-mono);font-size:10.5px;letter-spacing:.08em;fill:var(--ink-3)}
+.cell-empty{fill:var(--rule-2)}
+.led{stroke:var(--rule);stroke-width:1}
+.node,.wiregrp{transition:opacity .35s}
+.dim{opacity:.18}
+.dot{stroke:var(--panel);stroke-width:1.5}
+
+/* scope */
+#scopeWrap{position:relative}
+#scope{display:block;width:100%;height:340px}
+.tip{position:absolute;pointer-events:none;background:var(--hi);color:var(--on-hi);font:500 12px var(--f-mono);padding:6px 8px;border-radius:5px;width:max-content;max-width:300px;line-height:1.4;white-space:normal;z-index:3}
+.legend{display:flex;flex-wrap:wrap;gap:var(--s-2) var(--s-4);font-size:12.5px;color:var(--ink-2);align-items:center}
+.sw{display:inline-block;width:22px;height:10px;border-radius:2px;vertical-align:-1px;margin-right:6px}
+.sw.run{background:var(--ink-2)}
+.sw.ready{background:repeating-linear-gradient(135deg,var(--ink-3) 0 2px,transparent 2px 5px);outline:1px solid var(--ink-3);outline-offset:-1px}
+.sw.blk{background:linear-gradient(var(--rule),var(--rule)) center/100% 2px no-repeat}
+.sw.lock{background:var(--ink-2);outline:2px dashed var(--ink);outline-offset:-2px}
+.loads{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:var(--s-2) var(--s-5)}
+@media (max-width:820px){.loads{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.load{display:grid;grid-template-columns:1fr auto;gap:2px 8px;font-size:12.5px;min-width:0}
+.load .nm{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.load .pc{font-family:var(--f-mono);font-variant-numeric:tabular-nums;color:var(--ink-2)}
+.load .tr{grid-column:1/-1;height:5px;background:var(--rule-2);border-radius:3px;overflow:hidden}
+.load .tr i{display:block;height:100%;width:0}
+
+/* ladder */
+#ladder svg{display:block;width:100%;min-width:760px;height:auto}
+.lad-axis{stroke:var(--ink-2);stroke-width:1.4}
+.lad-tick{stroke:var(--rule);stroke-width:1}
+.lad-tl{font-family:var(--f-mono);font-size:11px;fill:var(--ink-3)}
+.lad-lead{stroke-width:1.2}
+.lad-v{font-family:var(--f-display);font-weight:750;font-stretch:85%;font-size:15px;fill:var(--ink)}
+.lad-n{font-family:var(--f-body);font-size:11.5px;fill:var(--ink-2)}
+.lad-band{font-family:var(--f-mono);font-size:10.5px;letter-spacing:.08em;fill:var(--ink-3)}
+
+/* task cards */
+.cards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--s-4)}
+@media (max-width:860px){.cards{grid-template-columns:1fr}}
+.card{background:var(--panel);border:1px solid var(--rule);border-radius:10px;padding:var(--s-4);display:grid;gap:var(--s-3);align-content:start;min-width:0}
+.card header{display:grid;grid-template-columns:auto 1fr auto;gap:4px var(--s-3);align-items:baseline}
+.card .sq{width:11px;height:11px;border-radius:2px;align-self:center}
+.card h3{font-size:19px}
+.prio{font:600 12px var(--f-mono);padding:3px 7px;border-radius:4px;border:1px solid var(--rule);white-space:nowrap;font-variant-numeric:tabular-nums}
+.card .fn{grid-column:2/-1;font-family:var(--f-mono);font-size:12px;color:var(--ink-3);overflow-wrap:anywhere}
+.kv{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:var(--s-2);border-block:1px solid var(--rule-2);padding-block:var(--s-2)}
+.kv div{display:grid;gap:0;min-width:0}
+.kv span{font:500 10.5px var(--f-mono);letter-spacing:.05em;text-transform:uppercase;color:var(--ink-3)}
+.kv b{font-weight:600;font-size:13.5px;font-variant-numeric:tabular-nums}
+.card ol{margin:0;padding-left:20px;display:grid;gap:5px;font-size:14px;color:var(--ink-2)}
+.card ol li::marker{font-family:var(--f-mono);font-size:12px;color:var(--ink-3)}
+.card ol b{color:var(--ink);font-weight:600}
+.io{display:grid;grid-template-columns:auto 1fr;gap:3px 10px;font-size:13px}
+.io span{font:500 10.5px var(--f-mono);letter-spacing:.05em;text-transform:uppercase;color:var(--ink-3);padding-top:2px}
+.io code{font-size:12px;overflow-wrap:anywhere}
+.kernel{font-size:14px;color:var(--ink-2);max-width:100ch}
+
+/* tables */
+.tbl{overflow-x:auto;border:1px solid var(--rule);border-radius:10px;background:var(--panel)}
+table{border-collapse:collapse;width:100%;font-size:13.5px}
+th{text-align:left;font:500 11px var(--f-mono);letter-spacing:.05em;text-transform:uppercase;color:var(--ink-3);padding:10px 12px;border-bottom:1px solid var(--rule);white-space:nowrap;background:var(--panel)}
+td{padding:9px 12px;border-bottom:1px solid var(--rule-2);vertical-align:top}
+tr:last-child td{border-bottom:0}
+td.num{font-family:var(--f-mono);font-size:12.5px;font-variant-numeric:tabular-nums;text-align:right;white-space:nowrap}
+td code{font-size:12px}
+.who{display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
+.who i{width:9px;height:9px;border-radius:2px;display:inline-block}
+
+/* model */
+.split{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:var(--s-5);align-items:start}
+@media (max-width:980px){.split{grid-template-columns:1fr}}
+#arch svg{display:block;width:100%;min-width:620px;height:auto}
+.ar-box{fill:var(--panel);stroke:var(--rule);stroke-width:1.2}
+.ar-t{font-family:var(--f-mono);font-size:11px;fill:var(--ink)}
+.ar-s{font-family:var(--f-mono);font-size:10px;fill:var(--ink-3)}
+.ar-h{font-family:var(--f-display);font-weight:700;font-stretch:88%;font-size:13.5px;fill:var(--ink)}
+.ar-w{fill:none;stroke:var(--ink-3);stroke-width:1.3}
+.mstats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:var(--s-2)}
+@media (max-width:620px){.mstats{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.mstats div{border-top:2px solid var(--c-ai);padding-top:6px;display:grid}
+.mstats b{font-family:var(--f-display);font-weight:750;font-stretch:85%;font-size:22px;font-variant-numeric:tabular-nums}
+.mstats span{font-size:12px;color:var(--ink-2)}
+.decide{display:grid;gap:0;border:1px solid var(--rule);border-radius:10px;background:var(--panel);overflow:hidden}
+.drow{display:grid;grid-template-columns:28px 1fr auto;gap:var(--s-3);padding:var(--s-3) var(--s-4);border-bottom:1px solid var(--rule-2);align-items:start;transition:background .3s}
+.drow:last-child{border-bottom:0}
+.drow .n{font:600 12px var(--f-mono);color:var(--ink-3);padding-top:2px}
+.drow .c{font-size:14px;min-width:0}
+.drow .c code{font-size:12px}
+.drow .c small{display:block;color:var(--ink-3);font-family:var(--f-mono);font-size:11.5px;margin-top:3px;font-variant-numeric:tabular-nums}
+.drow .r{font:600 12px var(--f-mono);white-space:nowrap;padding:3px 7px;border-radius:4px;border:1px solid var(--rule);color:var(--ink-3)}
+.drow.hit{background:var(--rule-2)}
+.drow.hit .r{border-color:currentColor}
+.drow.hit .r.an{color:var(--bad)}
+.drow.hit .r.ok{color:var(--ok)}
+.drow.pass .r{opacity:.55}
+.verdict{display:flex;flex-wrap:wrap;gap:var(--s-2) var(--s-4);align-items:baseline;font-size:14px;color:var(--ink-2)}
+.chip{font:600 12px var(--f-mono);padding:3px 8px;border-radius:999px;border:1px solid currentColor;white-space:nowrap}
+.chip.ok{color:var(--ok)} .chip.an{color:var(--bad)} .chip.na{color:var(--ink-3)}
+
+/* boot */
+.boot{list-style:none;margin:0;padding:0;display:grid;gap:0;counter-reset:b}
+.boot li{display:grid;grid-template-columns:110px minmax(0,1fr);gap:var(--s-4);padding:var(--s-3) 0;border-bottom:1px solid var(--rule-2)}
+.boot li:last-child{border-bottom:0}
+.boot .when{font:600 12.5px var(--f-mono);color:var(--ink-2);font-variant-numeric:tabular-nums;padding-top:2px}
+.boot .what{font-size:14.5px;color:var(--ink-2);max-width:88ch}
+.boot .what b{color:var(--ink);font-weight:600}
+@media (max-width:560px){.boot li{grid-template-columns:1fr;gap:2px}}
+
+/* findings */
+.finds{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--s-3)}
+@media (max-width:860px){.finds{grid-template-columns:1fr}}
+.find{background:var(--panel);border:1px solid var(--rule);border-radius:10px;padding:var(--s-3) var(--s-4);display:grid;gap:6px;align-content:start;min-width:0}
+.find header{display:flex;gap:var(--s-2);align-items:baseline;flex-wrap:wrap}
+.find h3{font-size:16px}
+.sev{font:600 10.5px var(--f-mono);letter-spacing:.05em;text-transform:uppercase;padding:2px 6px;border-radius:4px;border:1px solid currentColor}
+.sev.m{color:var(--warn)} .sev.l{color:var(--ink-3)} .sev.h{color:var(--bad)}
+.find p{font-size:14px;color:var(--ink-2)}
+.find .where{font-family:var(--f-mono);font-size:11.5px;color:var(--ink-3);overflow-wrap:anywhere}
+footer{padding-top:var(--s-5);border-top:1px solid var(--rule);font-size:12.5px;color:var(--ink-3)}
+@media (prefers-reduced-motion: reduce){*{transition:none!important}}
+</style>
+
+<div class="wrap">
+<header class="mast">
+  <a href="index.html" class="eyebrow" style="text-decoration:none">← Project overview</a>
+  <div class="eyebrow">STM32H573 · FreeRTOS 10.6.2 via CMSIS-RTOS2 · X-CUBE-AI · lwIP</div>
+  <h1>Motor-monitoring firmware, end to end</h1>
+  <p class="lede">Three sensors and a motor feed seven FreeRTOS tasks. They condense 200 Hz samples into a <b>14-feature row every 15 ms</b>, keep the last <b>30 rows</b> as a sliding window, and every <b>10th row</b> wake a 3-head neural network that decides whether the motor is healthy. The verdict goes out on the UART as CSV and to a browser dashboard over Ethernet.</p>
+  <div class="facts" role="list">
+    <div class="fact" role="listitem"><b>250 MHz</b><span>Cortex-M33 core, 25 MHz HSE ÷2 ×40 ÷2</span></div>
+    <div class="fact" role="listitem"><b>1 ms</b><span>FreeRTOS tick, preemptive with time slicing</span></div>
+    <div class="fact" role="listitem"><b>5 ms</b><span>Motor, current and vibration task period</span></div>
+    <div class="fact" role="listitem"><b>15 ms</b><span>One feature row from Data_Processing</span></div>
+    <div class="fact" role="listitem"><b>150 ms</b><span>One inference: 10 new rows into a 30-row window</span></div>
+    <div class="fact" role="listitem"><b>≈1.2 s</b><span>Power-on to first verdict (frame and window warm-up)</span></div>
+  </div>
+</header>
+
+<section id="map" aria-labelledby="map-h">
+  <div class="sechead">
+    <div class="eyebrow">Core/Src/app_freertos.c · Threads/* · X-CUBE-AI/App/app_x-cube-ai.c</div>
+    <h2 id="map-h">Live system map</h2>
+    <p class="prose">A timing simulation of this firmware drives the picture. Each coloured dot is data moving between hardware, tasks and shared buffers. A task's box lights up while it holds the CPU. Run the guided tour for a scene-by-scene walk from power-on to the browser, or explore freely.</p>
+  </div>
+  <div class="bar" role="group" aria-label="Simulation controls">
+    <button class="btn primary" id="tourBtn" type="button">▶ Guided tour</button>
+    <button class="btn" id="playBtn" type="button" aria-pressed="true">Pause</button>
+    <button class="btn" id="resetBtn" type="button">Power on again</button>
+    <span class="lbl">Speed</span>
+    <div class="seg" id="speedSeg" role="group" aria-label="Simulation speed">
+      <button type="button" data-v="0.004">1/250×</button><button type="button" data-v="0.02">1/50×</button><button type="button" data-v="0.04" aria-pressed="true">1/25×</button><button type="button" data-v="0.2">1/5×</button><button type="button" data-v="1">1×</button>
+    </div>
+    <label class="lbl" for="faultSel">Scenario</label>
+    <select id="faultSel">
+      <option value="none">Healthy motor</option>
+      <option value="mech">Mechanical fault (vibration)</option>
+      <option value="elec">Electrical fault (current spikes)</option>
+      <option value="unknown">Unknown anomaly (recon error)</option>
+      <option value="lowconf">Low-confidence normal</option>
+    </select>
+    <div class="clock" aria-live="off">since power-on <b id="simClock">0.000 s</b></div>
+  </div>
+  <div class="caption" id="caption" aria-live="polite">
+    <div class="step" id="capStep">FREE RUN</div>
+    <div><h3 id="capTitle">Everything at once</h3><p id="capText">All seven tasks are running. Pick a slower speed to follow individual samples, or start the guided tour.</p></div>
+    <div class="nav" id="capNav" hidden>
+      <button class="btn" id="prevScene" type="button">◀ Back</button>
+      <button class="btn" id="nextScene" type="button">Next ▶</button>
+      <button class="btn" id="endTour" type="button">End tour</button>
+      <div class="prog" aria-hidden="true"><i id="capProg"></i></div>
+    </div>
+  </div>
+  <div class="scroller"><svg id="mapSvg" viewBox="0 0 1240 590" role="img" aria-label="Data flow from sensors through FreeRTOS tasks to the AI model, UART and web dashboard"></svg></div>
+  <p class="note">Simulation. Priorities, periods, buffer sizes, flag logic, the motor ramp and the decision rules come straight from the code. Bus times are computed from the clock settings (I2C1 at 100 kHz, SPI5 at 3.9 MHz, USART1 at 921 600 Bd). CPU times for computation are estimates. Sensor readings and the network's raw outputs are stand-ins, since the real weights don't run in a browser.</p>
+</section>
+
+<section id="scope-sec" aria-labelledby="scope-h">
+  <div class="sechead">
+    <div class="eyebrow">FreeRTOSConfig.h · configUSE_PREEMPTION 1 · configTICK_RATE_HZ 1000</div>
+    <h2 id="scope-h">Which task runs when</h2>
+    <p class="prose">The same run drawn as a logic-analyzer capture, one lane per task, highest priority on top. The scheduler always gives the CPU to the highest-priority task that is ready; tasks of equal priority take turns at each 1 ms tick. Pause and hover any bar to see what that code was doing. At the 2 ms zoom you can watch the current task sleep through each 470 µs I2C transfer while lower tasks use the CPU.</p>
+  </div>
+  <div class="bar">
+    <button class="btn" id="playBtn2" type="button" aria-pressed="true">Pause</button>
+    <span class="lbl">Window</span>
+    <div class="seg" id="zoomSeg" role="group" aria-label="Trace window">
+      <button type="button" data-v="2000">2 ms</button><button type="button" data-v="20000" aria-pressed="true">20 ms</button><button type="button" data-v="200000">200 ms</button>
+    </div>
+    <div class="legend">
+      <span><i class="sw run"></i>running</span>
+      <span><i class="sw ready"></i>ready, waiting for CPU</span>
+      <span><i class="sw blk"></i>blocked (delay, semaphore)</span>
+      <span><i class="sw lock"></i>running with scheduler suspended</span>
+    </div>
+  </div>
+  <div class="scroller" id="scopeWrap"><canvas id="scope" aria-label="Scheduler trace of the seven tasks, ISRs and idle"></canvas><div class="tip" id="tip" hidden></div></div>
+  <div>
+    <div class="lbl" style="margin-bottom:8px">CPU share, last 1 s of simulated time</div>
+    <div class="loads" id="loads"></div>
+  </div>
+</section>
+
+<section id="ladder-sec" aria-labelledby="ladder-h">
+  <div class="sechead">
+    <div class="eyebrow">How often vs. how far back</div>
+    <h2 id="ladder-h">The data clock</h2>
+    <p class="prose">Every rate in the system on one logarithmic scale. Above the axis: how often something happens. Below: how much history each stage summarises. The model sees up to about 1.2 s of motor behaviour at once: a 450 ms window of rows, where each row already summarises the last 200 ms of current and 750 ms of vibration.</p>
+  </div>
+  <div class="scroller" id="ladder"></div>
+</section>
+
+<section id="tasks" aria-labelledby="tasks-h">
+  <div class="sechead">
+    <div class="eyebrow">MX_FREERTOS_Init() · creation order: default, Temp, Motor, Ethernet, Data_Processing, Current, Vibration</div>
+    <h2 id="tasks-h">The seven tasks, by priority</h2>
+    <p class="prose">CMSIS-RTOS2 priorities map to FreeRTOS numbers (Low 8, BelowNormal 16, Normal 24, AboveNormal 32, High 40). Stack sizes are in bytes and come out of the 100 KB FreeRTOS heap. All seven together take 76 KB of it.</p>
+  </div>
+  <div class="cards" id="cards"></div>
+  <p class="kernel"><b>Also running:</b> the FreeRTOS Idle task (priority 0) whenever nothing else is ready, and the timer service task (priority 2), which never wakes because no software timers are created. Interrupts that touch the RTOS (GPDMA1 channels 0–3, I2C1, SPI5, USART1, ETH) sit at NVIC priority 5, exactly at <code>configMAX_SYSCALL_INTERRUPT_PRIORITY</code>, so their callbacks may release semaphores. The HAL time base runs on TIM6 at priority 15; FreeRTOS uses SysTick.</p>
+</section>
+
+<section id="sync" aria-labelledby="sync-h">
+  <div class="sechead">
+    <div class="eyebrow">How data crosses between tasks</div>
+    <h2 id="sync-h">Handshakes, locks and flags</h2>
+    <p class="prose">There are no queues in this design. Tasks share global structs, guard them with short critical sections or mutexes, and signal readiness with flags and binary semaphores.</p>
+  </div>
+  <div class="tbl"><table id="syncTbl"><thead><tr><th>Object</th><th>Kind</th><th>Set or given by</th><th>Waited on or read by</th><th>Purpose</th></tr></thead><tbody></tbody></table></div>
+</section>
+
+<section id="features" aria-labelledby="feat-h">
+  <div class="sechead">
+    <div class="eyebrow">Data_Processing() · motor_model_params.h</div>
+    <h2 id="feat-h">The 14-feature row</h2>
+    <p class="prose">Built in the training's column order. The network subtracts the training mean and divides by the standard deviation itself (its first two layers), so the firmware passes raw values in. The firmware also keeps its own normalised copy, because the reconstruction error is measured in normalised units.</p>
+  </div>
+  <div class="tbl"><table id="featTbl"><thead><tr><th>#</th><th>Feature</th><th>From</th><th>How it is computed</th><th style="text-align:right">Train mean</th><th style="text-align:right">Train std</th></tr></thead><tbody></tbody></table></div>
+</section>
+
+<section id="model" aria-labelledby="model-h">
+  <div class="sechead">
+    <div class="eyebrow">dann_hybrid_generate_report.txt · post_process()</div>
+    <h2 id="model-h">Inside the network, and how the verdict is made</h2>
+    <p class="prose">The network is a pure MLP with two encoders that share the flattened 420-value input. One is an autoencoder that tries to rebuild its input; a poor rebuild means the window looks unlike training data. The other feeds a 7-class classifier and a 1-value anomaly logit. <code>post_process()</code> combines all three heads with fixed thresholds.</p>
+  </div>
+  <div class="mstats">
+    <div><b>44 466</b><span>parameters, float32</span></div>
+    <div><b>174 KB</b><span>weights in flash</span></div>
+    <div><b>3.4 KB</b><span>activation RAM (I/O inside it)</span></div>
+    <div><b>46 025</b><span>multiply-accumulates per run</span></div>
+  </div>
+  <div class="scroller" id="arch"></div>
+  <div class="split">
+    <div style="display:grid;gap:var(--s-3);min-width:0">
+      <h3>Decision rules, evaluated top to bottom</h3>
+      <div class="decide" id="decide"></div>
+      <div class="verdict" id="verdictLine"></div>
+      <p class="note">Highlights follow the simulation's latest verdict. Switch the scenario above the map to send it down a different branch. The model outputs feeding these rules are stand-ins; the rules and thresholds are the firmware's.</p>
+    </div>
+    <div style="display:grid;gap:var(--s-3);min-width:0">
+      <h3>Reconstruction thresholds by operating point</h3>
+      <div class="tbl"><table id="thTbl"><thead><tr><th>Mean PWM in window</th><th style="text-align:right">MSE threshold</th><th style="text-align:right">Normal baseline</th></tr></thead><tbody></tbody></table></div>
+      <p class="note">For classes motor_off, turning_off and turning_on the threshold is fixed instead: 4.031, 3.347 and 6.312. Severity is MSE divided by the baseline: under 2× normal, under 4× mild, under 8× moderate, otherwise severe. It is reported only for classes normal and above.</p>
+    </div>
+  </div>
+</section>
+
+<section id="boot" aria-labelledby="boot-h">
+  <div class="sechead">
+    <div class="eyebrow">main.c · Core/Src</div>
+    <h2 id="boot-h">From power-on to the first verdict</h2>
+  </div>
+  <ol class="boot" id="bootList"></ol>
+</section>
+
+
+
+<footer>Numbers labelled as coming from the code were read from the firmware sources; simulated execution times are estimates. <a href="index.html">← Back to the project overview</a></footer>
+</div>
+
+<script>
+(() => {
+'use strict';
+const $ = s => document.querySelector(s);
+const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/* ================= constants copied from the firmware ================= */
+const NORM_MEAN=[0.0321703702,0.423528224,0.282306701,9.24939823,0.082554318,2.60076427,0.60639751,0.415869385,0.536268353,0.591035485,0.6577034,0.789046824,0.0149320941,0.116665579];
+const NORM_VAR=[0.0165831614,0.102087505,0.12657325,23.7579765,0.0455393344,0.324492335,0.00562078087,0.017659558,0.00280927052,0.00374691444,0.0164413601,0.0499093868,0.000539952423,0.593476653];
+const PWM_EDGES=[0,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1.0];
+const NORMAL_TH=[0.386128217,0.114676803,0.0942992568,0.167960867,0.322025448,0.750934541,0.442112386,0.653334022];
+const LOCAL_BASE=[0.0614314452,0.0445347913,0.0409738868,0.0547763035,0.0876951218,0.147106349,0.227519542,0.210967287];
+const LABELS=['motor_off','turning_off','turning_on','normal','electrical_fault','mechanical_fault','thermal_fault'];
+const TH_OFF=4.03096792, TH_TOFF=3.3466177, TH_TON=6.31182035, ANOM_TH=0.486233, CONF_TH=0.3;
+const pwmBin = p => { for(let i=0;i<8;i++) if(p>=PWM_EDGES[i]&&p<PWM_EDGES[i+1]) return i; return p<0?0:7; };
+const reconTh = (c,p) => c===0?TH_OFF:c===1?TH_TOFF:c===2?TH_TON:NORMAL_TH[pwmBin(p)];
+const sevLabel = r => r<2?'normal':r<4?'mild':r<8?'moderate':'severe';
+
+/* timing model, µs. Bus times computed from clock config; CPU work estimated. */
+const TM={I2C:470, SPI1:3, SPI6:14, AIRUN:650, UART:13300};
+
+const TASKS=[
+ {id:'motor',name:'Motor_driver',short:'Motor',prio:40,pn:'High',col:'--c-motor'},
+ {id:'cur',name:'Current_sensor',short:'Current',prio:32,pn:'AboveNormal',col:'--c-cur'},
+ {id:'vib',name:'Vibration_sensor',short:'Vibration',prio:32,pn:'AboveNormal',col:'--c-vib'},
+ {id:'dp',name:'Data_Processing',short:'Data proc.',prio:24,pn:'Normal',col:'--c-dp'},
+ {id:'ai',name:'defaultTask (AI)',short:'AI',prio:16,pn:'BelowNormal',col:'--c-ai'},
+ {id:'temp',name:'Temp_sensor',short:'Temp',prio:16,pn:'BelowNormal',col:'--c-temp'},
+ {id:'eth',name:'Ethernet_Communication',short:'Ethernet',prio:8,pn:'Low',col:'--c-eth'},
+];
+
+/* ================= random helpers (seeded) ================= */
+let seed=12345; const rnd=()=>{seed=(seed*1664525+1013904223)>>>0;return seed/4294967296;};
+const gauss=()=>{let u=0,v=0;while(!u)u=rnd();while(!v)v=rnd();return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v);};
+
+/* ================= op constructors ================= */
+const cpu=(us,l)=>({op:'cpu',us:Math.max(1,Math.round(us)),l});
+const until=(tick)=>({op:'until',tick});
+const delay=(ticks,why)=>({op:'delay',ticks,why});
+const take=(sem,why)=>({op:'take',sem,why});
+const dma=(us,sem,l)=>({op:'dma',us,sem,l});
+const give=(sem)=>({op:'give',sem});
+const lock=()=>({op:'lock'}), unlock=()=>({op:'unlock'});
+
+/* ================= firmware data model ================= */
+function freshData(){
+  return {
+    fault:'none', speed:0,
+    m:{started:false,done:false,phase:0,spd:1,step:1,last:0,dir:0},
+    cur:{fI:new Float32Array(40),fV:new Float32Array(40),idx:0,count:0,step:0,rawI:0,rawV:0,filtI:0,filtV:0,rmsI:0,rmsV:0,varI:0,crest:0,flag:0,computes:0},
+    vib:{f:new Float32Array(150),idx:0,count:0,step:0,raw:{x:0,y:0,z:1,rms:0.577},have:false,lastSeq:-1,feat:null,flag:0,dups:0,computes:0},
+    temp:{t:NaN,start:null,ai:0,slope:0,old:null,lastTick:0,valid:false,last:0,readings:0},
+    win:{live:[],ready:null,count:0,step:0,rows:0,pubs:0,lastRow:null},
+    ai:{res:null,infers:0,firstT:null},
+    net:{q:[{t:950000,k:'syn'}],serves:0,last:null,lastT:null},
+  };
+}
+function motorControl(D,nowMs){
+  const M=D.m, H=[1000,500,200,100];
+  if(!M.started){M.last=nowMs;M.started=true;}
+  if(M.done) return 0;
+  if(nowMs-M.last>=H[M.phase]){
+    M.last=nowMs; M.spd+=M.step;
+    if(M.spd>=100){M.spd=100;M.step=-1;}
+    else if(M.spd<=1&&M.step===-1){M.spd=1;M.step=1;if(M.dir===0)M.dir=1;else{M.dir=0;M.phase++;if(M.phase>3)M.done=true;}}
+  }
+  return M.spd;
+}
+function curSample(S,D){
+  const c=D.cur, pwm=D.speed/99, tms=S.t/1000;
+  let I=0.06+0.5*pwm+0.012*gauss()+0.008*Math.sin(tms*0.13);
+  if(D.fault==='elec'&&rnd()<0.18) I+=0.3+0.3*rnd();
+  if(D.fault==='unknown') I+=0.02*gauss();
+  let V=12.04-0.35*pwm+0.008*gauss();
+  I=Math.round(I/0.00125)*0.00125; V=Math.round(V/0.00125)*0.00125;
+  c.rawI=I;c.rawV=V;
+  c.filtI=0.98*c.filtI+0.02*I; c.filtV=0.98*c.filtV+0.02*V;
+  c.fI[c.idx]=I;c.fV[c.idx]=V;c.idx=(c.idx+1)%40;
+  if(c.count<40)c.count++;
+  if(c.count>=40){ if(++c.step>=3){ c.step=0;
+      let sI=0,sV=0,mean=0; for(let i=0;i<40;i++){sI+=c.fI[i]*c.fI[i];sV+=c.fV[i]*c.fV[i];mean+=c.fI[i];}
+      c.rmsI=Math.sqrt(sI/40);c.rmsV=Math.sqrt(sV/40);mean/=40;
+      let vs=0,pk=0; for(let i=0;i<40;i++){const d=c.fI[i]-mean;vs+=d*d;pk=Math.max(pk,Math.abs(c.fI[i]));}
+      c.varI=vs/40;c.crest=c.rmsI>1e-6?pk/c.rmsI:0;c.computes++;return true; } }
+  return false;
+}
+function vibFresh(S,D){ const seq=Math.floor(S.t/5080); if(seq>D.vib.lastSeq){D.vib.lastSeq=seq;return true;} return false; }
+function vibSample(S,D,fresh){
+  const v=D.vib, pwm=D.speed/99;
+  let ax=v.raw;
+  if(fresh){
+    let a=0.012+0.05*pwm; if(D.fault==='mech')a*=4.2; if(D.fault==='unknown')a*=1.6;
+    let x=a*gauss(),y=a*gauss(),z=1.0+a*gauss();
+    if(D.fault==='mech'&&rnd()<0.12){z+=0.18*(rnd()<.5?-1:1);}
+    x=Math.round(x*1000)/1000;y=Math.round(y*1000)/1000;z=Math.round(z*1000)/1000;
+    const rms=Math.sqrt((x*x+y*y+z*z)/3);
+    if(rms>0.05&&rms<5&&!(v.have&&Math.abs(rms-v.raw.rms)>0.5)){ax={x,y,z,rms};v.raw=ax;v.have=true;}
+  } else v.dups++;
+  let ready=false;
+  if(ax.rms>0.2&&ax.rms<1.5&&Math.abs(ax.x)<2&&Math.abs(ax.y)<2&&Math.abs(ax.z)<2){
+    v.f[v.idx]=ax.rms;v.idx=(v.idx+1)%150; if(v.count<150)v.count++;
+    if(v.count>=150&&++v.step>=3){ v.step=0;
+      const n=150,b=v.f; let s=0,sq=0,mn=b[0],mx=b[0]; const tmp=Array.from(b);
+      for(let i=0;i<n;i++){s+=b[i];sq+=b[i]*b[i];if(b[i]>mx)mx=b[i];if(b[i]<mn)mn=b[i];}
+      const mean=s/n; let vs=0,t3=0; for(let i=0;i<n;i++){const d=b[i]-mean;vs+=d*d;t3+=d*d*d;}
+      const variance=vs/n, sd=Math.sqrt(variance); tmp.sort((p,q)=>p-q);
+      v.feat={rms:Math.sqrt(sq/n),min:mn,q1:tmp[37],median:(tmp[74]+tmp[75])/2,q3:tmp[112],max:mx,variance,skew:variance>1e-6?(t3/n)/(sd*sd*sd):0};
+      v.computes++; ready=true; }
+  }
+  return {ready};
+}
+function tempSample(S,D){
+  const T=D.temp, tms=Math.floor(S.t/1000);
+  let raw=23.4+0.0035*(S.t/1e6)*(1+D.speed/40)+0.03*gauss(); if(D.fault==='unknown')raw+=0.0;
+  raw=Math.round(raw*16)/16;
+  let t=raw;
+  if(T.valid&&Math.abs(t-T.last)>2)t=T.last; T.last=t;T.valid=true;
+  if(T.start===null)T.start=t;
+  T.t=t;T.ai=t-T.start;T.readings++;
+  if(T.old===null){T.old=t;T.lastTick=tms;}
+  if(tms-T.lastTick>=10000){T.slope=t-T.old;T.old=t;T.lastTick=tms;}
+}
+function buildRow(D){
+  const c=D.cur,f=D.vib.feat||{rms:0,min:0,q1:0,median:0,q3:0,max:0,variance:0,skew:0};
+  const powered=(c.rmsV>1)||(c.rmsI>0.05); let pwm=powered?D.speed/99:0; if(pwm>1)pwm=1;
+  return [D.temp.slope,pwm,c.rmsI,c.rmsV,c.varI,c.crest,f.rms,f.min,f.q1,f.median,f.q3,f.max,f.variance,f.skew];
+}
+function pushRow(D,row){
+  const W=D.win; W.rows++; W.lastRow=row; W.live.push(row); if(W.live.length>30)W.live.shift();
+  if(W.count<30){W.count++; if(W.count<30)return false; W.step=0;}
+  else{ W.step++; if(W.step<10)return false; W.step=0; }
+  W.ready=W.live.map(r=>r.slice()); W.pubs++; return true;
+}
+function fmt5(v){const s=v<0||Object.is(v,-0)?'-':'';const sc=Math.round(Math.abs(v)*1e5);return s+Math.floor(sc/1e5)+'.'+String(sc%1e5).padStart(5,'0');}
+function infer(S,D){
+  const rows=D.win.ready; let mp=0; rows.forEach(r=>mp+=r[1]); mp/=rows.length;
+  const base=LOCAL_BASE[pwmBin(mp)];
+  let cls=3,conf=0.88+0.08*rnd(),mse=base*(0.85+0.45*rnd()),logit=-3.3+0.6*gauss();
+  const f=D.fault;
+  if(f==='mech'){cls=5;conf=0.74+0.18*rnd();mse=base*(4.5+3*rnd());logit=2.2+0.5*gauss();}
+  if(f==='elec'){cls=4;conf=0.7+0.2*rnd();mse=base*(2.4+2*rnd());logit=1.8+0.5*gauss();}
+  if(f==='unknown'){cls=3;conf=0.26+0.03*rnd();mse=reconTh(3,mp)*(1.4+0.4*rnd());logit=0.4+0.3*gauss();}
+  if(f==='lowconf'){cls=3;conf=0.22+0.05*rnd();mse=base*(0.9+0.3*rnd());logit=-2.4+0.4*gauss();}
+  const ap=1/(1+Math.exp(-logit));
+  const th=reconTh(cls,mp);
+  let sr=0,sl='n/a'; if(cls>2){sr=base>0?mse/base:0;sl=sevLabel(sr);}
+  const bin=ap>=ANOM_TH, rec=mse>th, confd=conf>=CONF_TH;
+  let status,state,branch;
+  if(cls>=4&&confd){status='ANOMALY';state=LABELS[cls];branch=0;}
+  else if(bin||rec){status='ANOMALY';state='unknown_fault';branch=1;}
+  else if(cls<=3&&confd){status='NORMAL';state=LABELS[cls];branch=2;}
+  else{status='NORMAL';state='uncertain_safe';branch=3;}
+  const last=rows[rows.length-1];
+  const csv=last.map(fmt5).join(',')+','+state;
+  return {cls,cls_name:LABELS[cls],conf,ap,mse,th,mp,sr,sl,status,state,branch,bin,rec,confd,csv,t:S.t};
+}
+function netDue(S,D){const due=D.net.q.filter(e=>e.t<=S.t);D.net.q=D.net.q.filter(e=>e.t>S.t);return due.map(e=>e.k);}
+
+/* ================= task programs ================= */
+const P={};
+P.motor=function*(S,D){let wake=S.tick();for(;;){yield cpu(3,'motor_control(): ramp step, write CCR');D.speed=motorControl(D,S.tick());S.emit('motor');yield cpu(1,'speed = s (critical section)');wake+=5;yield until(wake);}};
+P.cur=function*(S,D){
+  yield cpu(110,'INA260_CheckDevice(): HAL_I2C_IsDeviceReady, polling');
+  yield cpu(420,'INA260_InitFast(): blocking config write 0x6007');
+  let wake=S.tick();
+  for(;;){
+    yield cpu(5,'take I2C_mutex, HAL_I2C_Mem_Read_DMA(0x01 current)');
+    yield dma(TM.I2C,'i2c','I2C1 DMA done, give i2c_dma_sem');
+    yield take('i2c','waiting on i2c_dma_sem (current read on the bus)');
+    yield cpu(4,'release mutex, HAL_I2C_Mem_Read_DMA(0x02 bus voltage)');
+    yield dma(TM.I2C,'i2c','I2C1 DMA done, give i2c_dma_sem');
+    yield take('i2c','waiting on i2c_dma_sem (voltage read on the bus)');
+    const r=curSample(S,D);
+    yield cpu(r?10:3,r?'RMS, variance and crest over 40 samples':'scale, EMA filter, store in 40-sample frame');
+    S.emit('cur',{ready:r});
+    if(r){D.cur.flag=1;S.mark('cur','cur_frame_ready = 1');}
+    wake+=5;yield until(wake);
+  }};
+P.vib=function*(S,D){
+  yield cpu(10000,'LIS3DH_Init(): HAL_Delay(10) busy-wait');
+  yield cpu(30,'LIS3DH_Init(): CTRL_REG1 0x67, CTRL_REG4 0x88 (polling SPI)');
+  let wake=S.tick();
+  for(;;){
+    yield cpu(4,'CS low, SPI TX DMA: read STATUS_REG 0x27');yield dma(TM.SPI1,'spi','SPI5 TX done, give spi_dma_sem');yield take('spi','waiting on spi_dma_sem (TX)');
+    yield cpu(3,'SPI RX DMA: 1 status byte');yield dma(TM.SPI1,'spi','SPI5 RX done, give spi_dma_sem');yield take('spi','waiting on spi_dma_sem (RX)');
+    const fresh=vibFresh(S,D);
+    if(fresh){
+      yield cpu(4,'ZYXDA set: SPI TX DMA, burst from OUT_X_L 0x28');yield dma(TM.SPI1,'spi','SPI5 TX done, give spi_dma_sem');yield take('spi','waiting on spi_dma_sem (TX)');
+      yield cpu(3,'SPI RX DMA: 6 bytes X/Y/Z');yield dma(TM.SPI6,'spi','SPI5 RX done, give spi_dma_sem');yield take('spi','waiting on spi_dma_sem (RX 6 bytes)');
+    }
+    const r=vibSample(S,D,fresh);
+    yield cpu(r.ready?85:5,r.ready?'stats and insertion sort over 150 samples':(fresh?'magnitude, glitch filters, store sample':'no new data: last good sample stored again'));
+    S.emit('vib',{ready:r.ready,fresh});
+    if(r.ready){D.vib.flag=1;S.mark('vib','vib_frame_ready = 1');}
+    wake+=5;yield until(wake);
+  }};
+P.dp=function*(S,D){
+  let wake=S.tick();
+  for(;;){
+    yield cpu(1,'check cur_frame_ready && vib_frame_ready (critical section)');
+    if(!(D.cur.flag&&D.vib.flag)){yield delay(1,'osDelay(1): polling for both frames');wake=S.tick();continue;}
+    D.cur.flag=0;D.vib.flag=0;
+    const row=buildRow(D);
+    yield cpu(10,'build 14-feature row, copy to features[] under Feature_mutex');
+    const pub=pushRow(D,row);
+    S.emit('row',{pub});
+    yield cpu(6,'AI_PushFeatureVector(): shift 30×14 window');
+    if(pub){yield cpu(5,'copy to ai_ready_window under AI_Window_mutex');yield give('ai');S.mark('dp','AI_Ready_sem given');S.emit('publish');}
+    wake+=15;yield until(wake);
+  }};
+P.ai=function*(S,D){
+  for(;;){
+    yield take('ai','waiting on AI_Ready_sem (osWaitForever)');
+    yield cpu(25,'acquire_and_process_data(): copy window, normalised copy');
+    yield cpu(TM.AIRUN,'ai_dann_hybrid_run(): 3 heads, 46 025 MACC (estimate)');
+    const res=infer(S,D);
+    yield cpu(15,'post_process(): argmax, sigmoid, MSE, thresholds, verdict');
+    D.ai.res=res;D.ai.infers++;if(D.ai.firstT===null)D.ai.firstT=S.t;
+    S.emit('infer',res);S.mark('ai','verdict: '+res.state);
+    yield cpu(TM.UART,'printf CSV, 10 rows: HAL_UART_Transmit busy-wait');
+    S.emit('uart',{line:res.csv});
+  }};
+function* owReset(){yield cpu(2,'1-Wire reset: pull line low');yield delay(2,'osDelay(2): reset pulse low');yield lock();yield cpu(70,'presence sample, IRQs off');yield unlock();yield delay(2,'osDelay(2): reset recovery');}
+function* owBits(n,us,l){for(let i=0;i<n;i++){yield lock();yield cpu(us,l);yield unlock();}}
+P.temp=function*(S,D){
+  for(;;){
+    yield* owReset();
+    yield* owBits(16,65,'write 0xCC 0x44 (Skip ROM, Convert T), scheduler suspended');
+    yield delay(750,'osDelay(750): DS18B20 converting');
+    yield* owReset();
+    yield* owBits(16,65,'write 0xCC 0xBE (Read Scratchpad), scheduler suspended');
+    yield* owBits(16,68,'read 2 scratchpad bytes, scheduler suspended');
+    tempSample(S,D);
+    yield cpu(4,'÷16, range and jump filter, 10 s slope');
+    S.emit('temp');
+    yield delay(50,'osDelay(50)');
+  }};
+P.eth=function*(S,D){
+  for(;;){
+    yield cpu(10,'ethernetif_input(): drain RX descriptors; sys_check_timeouts()');
+    const work=netDue(S,D);
+    for(const w of work){
+      if(w==='syn'){yield cpu(22,'tcp_input: SYN in, SYN-ACK out');S.emit('netReq');D.net.q.push({t:S.t+300,k:'get'});}
+      else{yield cpu(35,'httpd: parse GET /data');yield cpu(170,'fs_open("/data"): snprintf 31 fields');yield cpu(30,'tcp_write, then close');
+        D.net.serves++;D.net.lastT=S.t;D.net.last=D.ai.res;S.emit('http');S.mark('eth','GET /data served');D.net.q.push({t:S.t+300+300000+200,k:'syn'});}
+    }
+    yield cpu(4,'link check, DHCP state machine');
+    yield delay(100,'osDelay(100)');
+  }};
+
+/* ================= the scheduler ================= */
+class Sim{
+  constructor(){this.listeners=[];this.reset();}
+  reset(){
+    seed=12345;
+    this.t=0;this.seq=0;this.locked=null;this.sems={i2c:0,spi:0,ai:0};this.ev=[];this.out=[];this.lastTickT=-1;
+    this.D=freshData();
+    this.ks=TASKS.map(d=>({...d,gen:null,state:'ready',need:true,cpu:0,l:'',rr:0,wake:0,waitSem:null,why:'',used:0}));
+    this.by={};this.ks.forEach(k=>this.by[k.id]=k);
+    ['ai','temp','motor','eth','dp','cur','vib'].forEach((id,i)=>this.by[id].rr=i);this.seq=7;
+    this.ks.forEach(k=>k.gen=P[k.id](this,this.D));
+    this.lanes={};[...TASKS.map(t=>t.id),'idle'].forEach(id=>this.lanes[id]={segs:[],cur:null});
+    this.isr=[];this.marks=[];this.cur=null;this.idleUsed=0;
+  }
+  tick(){return Math.floor(this.t/1000);}
+  emit(type,data){this.out.push({t:this.t,type,data});}
+  mark(lane,l){this.marks.push({t:this.t,lane,l});}
+  ready(k){k.state='ready';k.need=true;k.rr=++this.seq;k.why='';}
+  give(name){
+    const w=this.ks.filter(k=>k.state==='blocked'&&k.waitSem===name).sort((a,b)=>b.prio-a.prio);
+    if(w.length){w[0].waitSem=null;this.ready(w[0]);} else this.sems[name]=1;
+  }
+  pick(){
+    if(this.locked&&this.locked.state==='ready')return this.locked;
+    let b=null;for(const k of this.ks)if(k.state==='ready'&&(!b||k.prio>b.prio||(k.prio===b.prio&&k.rr<b.rr)))b=k;return b;
+  }
+  resume(k){
+    k.need=false;
+    for(let guard=0;guard<1000;guard++){
+      const {value:o,done}=k.gen.next();
+      if(done){k.state='dead';return;}
+      switch(o.op){
+        case 'cpu':k.cpu=o.us;k.l=o.l;return;
+        case 'until':{const w=o.tick*1000;if(w<=this.t)continue;k.state='blocked';k.wake=w;k.why='osDelayUntil(): next period';return;}
+        case 'delay':{k.state='blocked';k.wake=(this.tick()+o.ticks)*1000;k.why=o.why;return;}
+        case 'take':if(this.sems[o.sem]>0){this.sems[o.sem]=0;continue;}k.state='blocked';k.waitSem=o.sem;k.wake=null;k.why=o.why;return;
+        case 'dma':this.ev.push({t:this.t+o.us,k:'dma',sem:o.sem,l:o.l,src:k.id});continue;
+        case 'give':this.give(o.sem);if(this.ks.some(x=>x.state==='ready'&&x.prio>k.prio)){k.need=true;return;}continue;
+        case 'lock':this.locked=k;continue;
+        case 'unlock':this.locked=null;k.need=true;return;
+      }
+    }
+  }
+  record(r){
+    const t=this.t;
+    for(const k of this.ks){
+      let s,l;
+      if(k===r){s=this.locked===k?'lock':'run';l=k.l;}else if(k.state==='ready'){s='ready';l=this.locked&&this.locked!==k?'ready, scheduler suspended by Temp_sensor':'ready, a higher-priority task has the CPU';}else{s='blk';l=k.why;}
+      this.seg(k.id,s,l,t);
+    }
+    this.seg('idle',r?'off':'run',r?'':'Idle task: nothing ready',t);
+  }
+  seg(id,s,l,t){const L=this.lanes[id];if(L.cur&&L.cur.s===s&&L.cur.l===l)return;if(L.cur)L.cur.t1=t;L.cur={t0:t,t1:null,s,l};L.segs.push(L.cur);}
+  fire(e){this.isr.push({t:this.t,k:'dma',src:e.src,l:e.l});this.give(e.sem);}
+  onTick(){
+    this.isr.push({t:this.t,k:'tick',l:'SysTick: kernel tick'});
+    for(const k of this.ks)if(k.state==='blocked'&&k.wake!==null&&k.wake<=this.t){k.wake=null;this.ready(k);}
+    const r=this.cur;
+    if(r&&r.state==='ready'&&!this.locked&&this.ks.some(k=>k!==r&&k.state==='ready'&&k.prio===r.prio))r.rr=++this.seq;
+  }
+  advanceTo(T){
+    T=Math.floor(T);let g=0;
+    while(this.t<T&&g++<400000){
+      let r=this.pick();while(r&&r.need){this.resume(r);r=this.pick();}
+      this.record(r);this.cur=r;
+      let next=Math.min(T,(this.tick()+1)*1000);
+      for(const e of this.ev)if(e.t<next)next=e.t;
+      if(r)next=Math.min(next,this.t+r.cpu);
+      if(next<this.t)next=this.t;
+      const dt=next-this.t;
+      if(r){r.cpu-=dt;r.used+=dt;}else this.idleUsed+=dt;
+      this.t=next;
+      if(r&&r.cpu<=0){r.cpu=0;r.need=true;}
+      if(this.ev.length){const due=this.ev.filter(e=>e.t<=this.t);if(due.length){this.ev=this.ev.filter(e=>e.t>this.t);due.sort((a,b)=>a.t-b.t).forEach(e=>this.fire(e));}}
+      if(this.t%1000===0&&this.lastTickT!==this.t){this.lastTickT=this.t;this.onTick();}
+    }
+    this.prune();
+  }
+  prune(){
+    const lim=this.t-1250000;
+    for(const id in this.lanes){const s=this.lanes[id].segs;if(s.length>3000){let i=0;while(i<s.length-1&&s[i].t1!==null&&s[i].t1<lim)i++;if(i)s.splice(0,i);}}
+    if(this.isr.length>6000){let i=0;while(i<this.isr.length&&this.isr[i].t<lim)i++;this.isr.splice(0,i);}
+    if(this.marks.length>3000){let i=0;while(i<this.marks.length&&this.marks[i].t<lim)i++;this.marks.splice(0,i);}
+  }
+}
+
+/* ================= theme-aware colour lookup ================= */
+let CSS={};let patterns={};
+function readCss(){const cs=getComputedStyle(document.documentElement);const g=n=>cs.getPropertyValue(n).trim();
+  CSS={paper:g('--paper'),panel:g('--panel'),ink:g('--ink'),ink2:g('--ink-2'),ink3:g('--ink-3'),rule:g('--rule'),rule2:g('--rule-2'),isr:g('--c-isr'),idle:g('--c-idle'),neg:g('--neg'),pos:g('--pos'),ok:g('--ok'),bad:g('--bad')};
+  TASKS.forEach(t=>CSS[t.id]=g(t.col));
+  CSS.dark=lum(CSS.paper)<0.4; patterns={};}
+function lum(hex){const h=hex.replace('#','');if(h.length<6)return 1;const n=parseInt(h,16);return (0.299*((n>>16)&255)+0.587*((n>>8)&255)+0.114*(n&255))/255;}
+function mix(a,b,t){const pa=parseInt(a.slice(1),16),pb=parseInt(b.slice(1),16);const c=i=>Math.round(((pa>>i)&255)*(1-t)+((pb>>i)&255)*t);return `rgb(${c(16)},${c(8)},${c(0)})`;}
+readCss();
+matchMedia('(prefers-color-scheme: dark)').addEventListener('change',()=>{readCss();redrawStatic();});
+new MutationObserver(()=>{readCss();redrawStatic();}).observe(document.documentElement,{attributes:true,attributeFilter:['data-theme']});
+
+/* ================= SVG helpers ================= */
+const NS='http://www.w3.org/2000/svg';
+function E(tag,a,p){const e=document.createElementNS(NS,tag);for(const k in a)e.setAttribute(k,a[k]);if(p)p.appendChild(e);return e;}
+function T(p,x,y,s,cls,anchor){const t=E('text',{x,y,class:cls},p);if(anchor)t.setAttribute('text-anchor',anchor);t.textContent=s;return t;}
+
+/* ================= build the system map ================= */
+const svg=$('#mapSvg');
+const gW=E('g',{},svg), gN=E('g',{},svg), gDots=E('g',{},svg);
+const N={}, V={}, PATHS={};
+function node(id,x,y,w,h,col,title,sub,prio,soft){
+  const g=E('g',{class:'node','data-n':id},gN);
+  const glow=E('rect',{x:x-3,y:y-3,width:w+6,height:h+6,rx:10,class:'glow',style:`stroke:var(${col})`},g);
+  E('rect',{x,y,width:w,height:h,rx:7,class:'nbox'+(soft?' soft':'')},g);
+  E('rect',{x:x+12,y:y+13,width:9,height:9,rx:2,style:`fill:var(${col})`},g);
+  T(g,x+27,y+22,title,'ntitle');
+  if(prio){const pc=T(g,x+w-10,y+21,prio,'pchip','end');}
+  if(sub)T(g,x+12,y+39,sub,'nsub');
+  N[id]={g,glow,x,y,w,h,col,level:0};
+  return g;
+}
+function wire(id,d,label,lx,ly,anchor,dash){
+  const p=E('path',{d,class:'wire'+(dash?' dash':''),'data-w':id},gW);PATHS[id]={p,len:0};
+  if(label)T(gW,lx,ly,label,'wlabel',anchor);
+  return p;
+}
+function buildMap(){
+  // column heads
+  [['HARDWARE',16],['SENSOR & MOTOR TASKS',246],['SHARED STATE',476],['FEATURES & WINDOW',736],['INFERENCE & OUTPUTS',976]].forEach(([s,x])=>T(gN,x,16,s,'colhead'));
+  // hardware
+  node('hw-motor',16,28,190,72,'--c-motor','DC motor, H-bridge','TIM1 CH1 / TIM12 CH2 PWM');T(N['hw-motor'].g,28,88,'1.5 kHz · CCR = speed × 10','nsub');
+  node('hw-ina',16,128,190,72,'--c-cur','INA260','I2C1 100 kHz · GPDMA');T(N['hw-ina'].g,28,188,'0x01 current · 0x02 bus V','nsub');
+  node('hw-lis',16,228,190,72,'--c-vib','LIS3DH','SPI5 3.9 MHz · GPDMA');T(N['hw-lis'].g,28,288,'200 Hz ODR · ±2 g · 12-bit','nsub');
+  node('hw-ds',16,328,190,72,'--c-temp','DS18B20','1-Wire, bit-banged GPIO');T(N['hw-ds'].g,28,388,'750 ms per conversion','nsub');
+  // tasks
+  node('t-motor',246,28,190,72,'--c-motor','Motor_driver','every 5 ms','40');V.mSpd=T(N['t-motor'].g,258,88,'ramp —','nval');
+  node('t-cur',246,128,190,72,'--c-cur','Current_sensor','every 5 ms · 2 DMA reads','32');V.cRaw=T(N['t-cur'].g,258,188,'—','nval');
+  node('t-vib',246,228,190,72,'--c-vib','Vibration_sensor','every 5 ms · SPI DMA','32');V.vRaw=T(N['t-vib'].g,258,288,'—','nval');
+  node('t-temp',246,328,190,72,'--c-temp','Temp_sensor','≈0.81 s per reading','16');V.tRaw=T(N['t-temp'].g,258,388,'—','nval');
+  // shared
+  node('s-speed',476,28,220,72,'--c-motor','speed','uint16, critical section',null,true);V.speed=T(N['s-speed'].g,684,24+62,'0','nbig','end');
+  node('s-ina',476,128,220,72,'--c-cur','INA260 frame','40 samples = 200 ms',null,true);
+  node('s-vib',476,228,220,72,'--c-vib','LIS3DH frame','150 samples = 750 ms',null,true);
+  node('s-temp',476,328,220,72,'--c-temp','temp, temp_slope_10s','critical section',null,true);V.temp=T(N['s-temp'].g,488,388,'—','nval');
+  // gauges
+  V.inaCells=[];for(let i=0;i<40;i++)V.inaCells.push(E('rect',{x:488+i*4.6,y:176,width:3.6,height:10,rx:.6,class:'cell-empty'},N['s-ina'].g));
+  V.vibCells=[];for(let i=0;i<150;i++)V.vibCells.push(E('rect',{x:488+i*1.24,y:276,width:1.1,height:10,class:'cell-empty'},N['s-vib'].g));
+  V.ledCur=E('circle',{cx:688,cy:214,r:5,class:'led'},gN);T(gN,678,217.5,'cur_frame_ready','wlabel','end');
+  V.ledVib=E('circle',{cx:688,cy:314,r:5,class:'led'},gN);T(gN,678,317.5,'vib_frame_ready','wlabel','end');
+  V.inaTxt=T(N['s-ina'].g,488,198,'','nsub');V.vibTxt=T(N['s-vib'].g,488,298,'','nsub');
+  // DP + window
+  node('dp',736,28,200,88,'--c-dp','Data_Processing','one row ≈ every 15 ms','24');
+  V.dpRows=T(N['dp'].g,748,82,'rows 0','nval');V.dpNext=T(N['dp'].g,748,102,'','nsub');
+  node('win',736,136,200,232,'--c-dp','ai_live_window','30 rows × 14 features',null,true);
+  V.win=[];const gx=748,gy=200,cw=176/30,ch=10.6;
+  for(let r=0;r<30;r++){V.win[r]=[];for(let f=0;f<14;f++)V.win[r][f]=E('rect',{x:gx+r*cw,y:gy+f*ch,width:cw-0.8,height:ch-0.8,class:'cell-empty'},N['win'].g);}
+  T(N['win'].g,748,194,'oldest','wlabel');T(N['win'].g,924,194,'newest','wlabel','end');
+  V.winTxt=T(N['win'].g,748,360,'','nsub');
+  // AI
+  node('ai',976,28,248,160,'--c-ai','defaultTask · AI','blocks on AI_Ready_sem','16');
+  const ag=N['ai'].g;
+  T(ag,988,88,'ai_dann_hybrid_run()','nval');
+  V.hCls=T(ag,988,110,'class head  —','nsub');V.hRec=T(ag,988,128,'recon head  —','nsub');V.hAn=T(ag,988,146,'anomaly head  —','nsub');
+  V.aiCnt=T(ag,988,172,'inferences 0','nsub');
+  V.ledSem=E('circle',{cx:956,cy:200,r:5,class:'led'},gN);{const lt=T(gN,969,150,'AI_Ready_sem','wlabel','middle');lt.setAttribute('transform','rotate(-90 969 150)');}
+  // results
+  node('res',976,206,248,150,'--c-ai','mt_* verdict','globals read by UART and web',null,true);
+  const rg=N['res'].g;
+  V.rStatus=T(rg,988,272,'WAIT','nbig');V.rState=T(rg,988,296,'waiting','nval');
+  V.rConf=T(rg,988,316,'','nsub');V.rMse=T(rg,988,332,'','nsub');V.rAp=T(rg,988,348,'','nsub');
+  // UART
+  node('uart',976,374,248,70,'--c-ai','USART1 → PuTTY','921 600 Bd · CSV, 10 rows per verdict');
+  V.uart=T(N['uart'].g,988,432,'','nsub');
+  // ETH + browser
+  node('eth',476,430,240,88,'--c-eth','Ethernet_Communication','lwIP NO_SYS · polls every 100 ms','8');
+  T(N['eth'].g,488,490,'httpd :80 · RMII PHY · DHCP','nsub');V.ethTxt=T(N['eth'].g,488,508,'','nsub');
+  node('web',976,462,248,112,'--c-eth','Browser dashboard','GET /data → 31 CSV fields');
+  V.wStatus=T(N['web'].g,988,526,'no data yet','nval');V.wInfo=T(N['web'].g,988,546,'','nsub');V.wInfo2=T(N['web'].g,988,564,'','nsub');
+  // wires
+  wire('pwm','M246,64 H206','CCR',226,58,'middle');
+  wire('spd','M436,64 H476','',0,0);
+  wire('i2c','M206,164 H246','I2C',226,158,'middle');
+  wire('cfr','M436,164 H476','',0,0);
+  wire('spi','M206,264 H246','SPI',226,258,'middle');
+  wire('vfr','M436,264 H476','',0,0);
+  wire('ow','M206,364 H246','1-Wire',226,358,'middle');
+  wire('tv','M436,364 H476','',0,0);
+  wire('sp2dp','M696,52 H736','',0,0);
+  wire('c2dp','M696,150 H708 Q716,150 716,142 V100 Q716,92 724,92 H736','',0,0);
+  wire('v2dp','M696,250 H701 Q709,250 709,242 V106 Q709,98 717,98 H736','',0,0);
+  wire('t2dp','M696,350 Q702,350 702,344 V110 Q702,104 708,104 H736','',0,0);
+  T(gW,698,124,'flags','wlabel');
+  wire('dp2w','M836,116 V136','',0,0);
+  wire('w2ai','M936,248 H956 V108 H976','',0,0);
+  wire('ai2r','M1100,188 V206','',0,0);
+  wire('r2u','M1100,356 V374','',0,0);
+  wire('f2e','M746,116 V124 H728 V446 H716','features[]',732,438,'start',true);
+  wire('r2e','M976,330 H960 V462 H716','mt_* strings',890,456,'start',true);
+  wire('e2w','M716,486 H940 V520 H976','HTTP',944,512,'start');
+  for(const k in PATHS)PATHS[k].len=PATHS[k].p.getTotalLength();
+  // node to group mapping for focus
+}
+buildMap();
+
+/* ================= dots ================= */
+const dots=[];const lastSpawn={};
+function spawn(pathId,col,delay=0,rev=false,dur=520){
+  const now=performance.now();if(reduceMotion)return;
+  if(lastSpawn[pathId]&&now-lastSpawn[pathId]<70&&!delay)return;lastSpawn[pathId]=now;
+  if(dots.length>90)return;
+  const c=E('circle',{r:4.2,class:'dot',style:`fill:var(${col})`,cx:-20,cy:-20},gDots);
+  dots.push({c,path:PATHS[pathId],t0:now+delay,dur,rev});
+}
+function moveDots(now){
+  for(let i=dots.length-1;i>=0;i--){const d=dots[i];let p=(now-d.t0)/d.dur;
+    if(p<0){d.c.setAttribute('cx',-20);continue;}
+    if(p>=1){d.c.remove();dots.splice(i,1);continue;}
+    p=p<.5?2*p*p:1-Math.pow(-2*p+2,2)/2;
+    const pt=d.path.p.getPointAtLength(d.path.len*(d.rev?1-p:p));d.c.setAttribute('cx',pt.x);d.c.setAttribute('cy',pt.y);}
+}
+
+/* ================= sim + loop ================= */
+const sim=new Sim();
+let speed=0.04, playing=!reduceMotion, zoom=20000;
+const flash={cur:0,vib:0,sem:0};
+const glow={};TASKS.forEach(t=>glow[t.id]=0);
+const prevUsed={};
+const taskNode={motor:'t-motor',cur:'t-cur',vib:'t-vib',temp:'t-temp',dp:'dp',ai:'ai',eth:'eth'};
+
+function preroll(ms){sim.advanceTo(ms*1000);sim.out=[];TASKS.forEach(t=>prevUsed[t.id]=sim.by[t.id].used);}
+preroll(1650);
+
+function handleOut(now){
+  for(const o of sim.out){
+    switch(o.type){
+      case 'motor':spawn('pwm','--c-motor',0,true);spawn('spd','--c-motor',120);break;
+      case 'cur':spawn('i2c','--c-cur');spawn('cfr','--c-cur',150);if(o.data.ready)flash.cur=now;break;
+      case 'vib':if(o.data.fresh)spawn('spi','--c-vib');spawn('vfr','--c-vib',150);if(o.data.ready)flash.vib=now;break;
+      case 'temp':spawn('ow','--c-temp',0,false,700);spawn('tv','--c-temp',200,false,600);break;
+      case 'row':spawn('sp2dp','--c-motor');spawn('c2dp','--c-cur');spawn('v2dp','--c-vib');spawn('t2dp','--c-temp');spawn('dp2w','--c-dp',300,false,400);winDirty=true;break;
+      case 'publish':spawn('w2ai','--c-dp',0,false,650);flash.sem=now;break;
+      case 'infer':spawn('ai2r','--c-ai',0,false,450);verdictDirty=true;break;
+      case 'uart':spawn('r2u','--c-ai',0,false,450);V.uart.textContent=o.data.line.length>34?o.data.line.slice(0,33)+'…':o.data.line;break;
+      case 'netReq':spawn('e2w','--c-eth',0,true,700);break;
+      case 'http':spawn('f2e','--c-dp',0,false,650);spawn('r2e','--c-ai',0,false,650);spawn('e2w','--c-eth',350,false,700);webDirty=true;break;
+    }
+  }
+  sim.out=[];
+}
+let winDirty=true,verdictDirty=true,webDirty=true;
+
+function cellColor(z){const m=Math.min(1,Math.abs(z)/3);return mix(CSS.panel,z<0?CSS.neg:CSS.pos,0.12+0.88*m);}
+function updateMap(now,dtReal){
+  const D=sim.D;
+  // glow
+  for(const t of TASKS){const k=sim.by[t.id];const ran=k.used>prevUsed[t.id];prevUsed[t.id]=k.used;
+    glow[t.id]=ran?1:glow[t.id]*Math.exp(-dtReal/220);N[taskNode[t.id]].glow.style.opacity=glow[t.id].toFixed(3);}
+  V.mSpd.textContent=`${D.m.dir?'left':'right'} · phase ${D.m.phase} · CCR ${D.speed>=100?999:D.speed*10}`;
+  V.speed.textContent=String(D.speed);
+  V.cRaw.textContent=`${D.cur.rawI.toFixed(3)} A · ${D.cur.rawV.toFixed(2)} V`;
+  V.vRaw.textContent=`|a| ${D.vib.raw.rms.toFixed(3)} g · z ${D.vib.raw.z.toFixed(3)}`;
+  V.tRaw.textContent=isNaN(D.temp.t)?'first conversion…':`${D.temp.t.toFixed(4)} °C`;
+  V.temp.textContent=isNaN(D.temp.t)?'—':`${D.temp.t.toFixed(2)} °C · slope ${D.temp.slope.toFixed(4)}`;
+  // gauges
+  const c=D.cur, v=D.vib;
+  for(let i=0;i<40;i++){const on=i<c.count;const cell=V.inaCells[i];cell.setAttribute('class',on?'':'cell-empty');cell.style.fill=on?(i===(c.idx+39)%40?CSS.ink:CSS.cur):'';}
+  for(let i=0;i<150;i++){const on=i<v.count;const cell=V.vibCells[i];cell.setAttribute('class',on?'':'cell-empty');cell.style.fill=on?(i===(v.idx+149)%150?CSS.ink:CSS.vib):'';}
+  V.inaTxt.textContent=c.count<40?`filling ${c.count}/40`:`Irms ${c.rmsI.toFixed(3)} A · crest ${c.crest.toFixed(2)}`;
+  V.vibTxt.textContent=v.count<150?`filling ${v.count}/150`:(v.feat?`rms ${v.feat.rms.toFixed(3)} · med ${v.feat.median.toFixed(3)} g`:'');
+  const led=(el,on,col)=>{el.style.fill=on?col:CSS.rule2;};
+  led(V.ledCur,D.cur.flag||now-flash.cur<260,CSS.cur);led(V.ledVib,D.vib.flag||now-flash.vib<260,CSS.vib);led(V.ledSem,sim.sems.ai||now-flash.sem<500,CSS.ai);
+  const W=D.win;
+  V.dpRows.textContent=`row #${W.rows}`;
+  V.dpNext.textContent=W.count<30?`waiting for both frames → ${30-W.count} rows to first window`:'features[14] → dashboard';
+  if(winDirty){winDirty=false;const L=W.live,off=30-L.length;
+    for(let r=0;r<30;r++)for(let f=0;f<14;f++){const cell=V.win[r][f];const row=L[r-off];
+      if(!row){cell.setAttribute('class','cell-empty');cell.style.fill='';continue;}
+      cell.setAttribute('class','');cell.style.fill=cellColor((row[f]-NORM_MEAN[f])/Math.sqrt(NORM_VAR[f]+1e-7));}
+    V.winTxt.textContent=W.count<30?`${W.count}/30 rows, first publish at 30`:`${10-W.step} rows to publish · ${W.pubs} sent`;}
+  if(verdictDirty&&D.ai.res){verdictDirty=false;const r=D.ai.res;
+    V.rStatus.textContent=r.status;V.rStatus.style.fill=r.status==='NORMAL'?CSS.ok:CSS.bad;V.rState.textContent=r.state+(r.sl!=='n/a'?` · severity ${r.sl}`:'');
+    V.rConf.textContent=`class ${r.cls_name} · conf ${(r.conf*100).toFixed(1)} %`;
+    V.rMse.textContent=`MSE ${r.mse.toFixed(4)} vs threshold ${r.th.toFixed(4)}`;
+    V.rAp.textContent=`anomaly p ${(r.ap*100).toFixed(1)} % · limit 48.6 %`;
+    V.hCls.textContent=`class head   7 × softmax → ${r.cls_name}`;V.hRec.textContent=`recon head   420 values → MSE ${r.mse.toFixed(3)}`;V.hAn.textContent=`anomaly head 1 logit → σ = ${r.ap.toFixed(2)}`;
+    V.aiCnt.textContent=`inferences ${D.ai.infers} · first at ${(D.ai.firstT/1e6).toFixed(3)} s`;
+    updateDecision(r);}
+  if(webDirty){webDirty=false;const n=D.net;
+    if(n.last){V.wStatus.textContent=`${n.last.status} · ${n.last.state}`;V.wStatus.style.fill=n.last.status==='NORMAL'?CSS.ok:CSS.bad;}
+    else if(n.serves){V.wStatus.textContent='connected, WAIT';}
+    V.wInfo.textContent=n.serves?`${n.serves} replies · last at ${(n.lastT/1e6).toFixed(3)} s`:'first request after link-up';
+    V.wInfo2.textContent='next request 300 ms after each reply';}
+  V.ethTxt.textContent=`${D.net.serves} /data replies served`;
+}
+
+/* ================= scope ================= */
+const cv=$('#scope'),ctx=cv.getContext('2d');
+const LANES=[{id:'isr',name:'ISRs',prio:''},...TASKS.map(t=>({id:t.id,name:t.name,prio:String(t.prio)})),{id:'idle',name:'Idle',prio:'0'}];
+function hatch(col){if(patterns[col])return patterns[col];const c=document.createElement('canvas');c.width=c.height=8;const x=c.getContext('2d');x.strokeStyle=col;x.globalAlpha=.75;x.lineWidth=1.4;x.beginPath();x.moveTo(0,8);x.lineTo(8,0);x.moveTo(-2,2);x.lineTo(2,-2);x.moveTo(6,10);x.lineTo(10,6);x.stroke();return patterns[col]=ctx.createPattern(c,'repeat');}
+let SC={w:0,h:0,dpr:1,lab:170,laneH:32,top:8};
+function sizeScope(){const r=cv.getBoundingClientRect();const dpr=window.devicePixelRatio||1;SC.dpr=dpr;SC.w=r.width;SC.lab=r.width<560?104:170;SC.h=SC.top+LANES.length*SC.laneH+26;cv.style.height=SC.h+'px';cv.width=Math.round(r.width*dpr);cv.height=Math.round(SC.h*dpr);}
+sizeScope();addEventListener('resize',()=>{sizeScope();drawScope();});
+function drawScope(){
+  const {w,h,dpr,lab,laneH,top}=SC;ctx.setTransform(dpr,0,0,dpr,0,0);ctx.clearRect(0,0,w,h);
+  const t1=sim.t,t0=t1-zoom,pw=w-lab-10,X=t=>lab+(t-t0)/zoom*pw;
+  ctx.font='500 11px "IBM Plex Mono", monospace';ctx.textBaseline='middle';
+  // grid
+  ctx.strokeStyle=CSS.rule2;ctx.lineWidth=1;const step=zoom/10;
+  for(let g=Math.ceil(t0/step)*step;g<=t1;g+=step){const x=Math.round(X(g))+.5;ctx.beginPath();ctx.moveTo(x,top);ctx.lineTo(x,top+LANES.length*laneH);ctx.stroke();}
+  LANES.forEach((L,i)=>{const y=top+i*laneH,mid=y+laneH/2,col=L.id==='isr'?CSS.isr:L.id==='idle'?CSS.ink3:CSS[L.id];
+    ctx.fillStyle=col;ctx.fillRect(8,mid-4,8,8);
+    ctx.fillStyle=CSS.ink;ctx.textAlign='left';ctx.font=`600 ${lab<120?10.5:12}px "IBM Plex Sans", sans-serif`;
+    const nm=lab<120?(L.id==='isr'?'ISRs':L.id==='idle'?'Idle':TASKS.find(t=>t.id===L.id).short):L.name;
+    ctx.fillText(nm,22,mid-(L.prio&&lab>=120?6:0));
+    if(L.prio&&lab>=120){ctx.fillStyle=CSS.ink3;ctx.font='500 10px "IBM Plex Mono", monospace';ctx.fillText('prio '+L.prio,22,mid+8);}
+    ctx.strokeStyle=CSS.rule2;ctx.beginPath();ctx.moveTo(lab,y+laneH+.5);ctx.lineTo(w,y+laneH+.5);ctx.stroke();
+    if(L.id==='isr'){for(const e of sim.isr){if(e.t<t0)continue;const x=X(e.t);if(e.k==='tick'){ctx.fillStyle=CSS.ink3;ctx.fillRect(x-.5,mid-5,1.2,10);}else{ctx.fillStyle=CSS[e.src];ctx.fillRect(x-1,y+5,2.2,laneH-10);}}return;}
+    const lane=sim.lanes[L.id];const segs=lane.segs;
+    // baseline
+    ctx.strokeStyle=CSS.rule;ctx.lineWidth=1.5;ctx.beginPath();ctx.moveTo(lab,mid+.5);ctx.lineTo(lab+pw,mid+.5);ctx.stroke();
+    for(let s=segs.length-1;s>=0;s--){const sg=segs[s];const e=sg.t1===null?t1:sg.t1;if(e<t0)break;if(sg.s==='blk'||sg.s==='off')continue;
+      const xa=Math.max(lab,X(sg.t0)),xb=Math.max(xa+0.8,X(e));const hh=laneH-12;
+      if(sg.s==='run'||sg.s==='lock'){ctx.fillStyle=L.id==='idle'?CSS.idle:col;ctx.fillRect(xa,y+6,xb-xa,hh);if(sg.s==='lock'&&xb-xa>3){ctx.strokeStyle=CSS.ink;ctx.setLineDash([3,2]);ctx.lineWidth=1.2;ctx.strokeRect(xa+.6,y+6.6,xb-xa-1.2,hh-1.2);ctx.setLineDash([]);}}
+      else if(sg.s==='ready'){ctx.fillStyle=hatch(col);ctx.fillRect(xa,y+9,xb-xa,hh-6);}
+    }
+    if(zoom<=2000){ctx.font='500 10px "IBM Plex Mono", monospace';ctx.fillStyle=CSS.ink2;let lastX=-1e9;
+      for(const m of sim.marks){if(m.lane!==L.id||m.t<t0)continue;const x=X(m.t);ctx.fillStyle=CSS.ink;ctx.beginPath();ctx.moveTo(x,y+2);ctx.lineTo(x+4,y+6);ctx.lineTo(x,y+10);ctx.lineTo(x-4,y+6);ctx.fill();if(x-lastX>120&&x<w-60){ctx.fillStyle=CSS.ink2;ctx.textAlign='left';ctx.fillText(m.l,x+6,y+6);lastX=x;}}}
+  });
+  // axis
+  ctx.fillStyle=CSS.ink3;ctx.font='500 10.5px "IBM Plex Mono", monospace';ctx.textAlign='center';
+  const ay=top+LANES.length*laneH+14;const dec=zoom<=2000?3:zoom<=20000?1:0;
+  for(let g=Math.ceil(t0/(step*2))*step*2;g<=t1;g+=step*2){const x=X(g);if(x<lab+20||x>w-24)continue;ctx.fillText((g/1000).toFixed(dec)+' ms',x,ay);}
+  ctx.textAlign='left';
+}
+// tooltip
+const tip=$('#tip');
+cv.addEventListener('mousemove',ev=>{
+  const r=cv.getBoundingClientRect(),mx=ev.clientX-r.left,my=ev.clientY-r.top;const {lab,laneH,top,w}=SC;
+  const li=Math.floor((my-top)/laneH);if(mx<lab||li<0||li>=LANES.length){tip.hidden=true;return;}
+  const pw=w-lab-10,t=sim.t-zoom+(mx-lab)/pw*zoom;const L=LANES[li];let txt='';
+  if(L.id==='isr'){let best=null,bd=1e9;for(const e of sim.isr){const d=Math.abs(e.t-t);if(d<bd){bd=d;best=e;}}if(best&&bd<zoom/120)txt=`${best.l} · t=${(best.t/1000).toFixed(3)} ms`;}
+  else{const segs=sim.lanes[L.id].segs;for(let s=segs.length-1;s>=0;s--){const sg=segs[s];const e=sg.t1===null?sim.t:sg.t1;if(sg.t0<=t&&e>=t){const st={run:'running',lock:'running, scheduler suspended',ready:'ready',blk:'blocked',off:'not running'}[sg.s];const d=e-sg.t0;txt=`${L.name} · ${st} ${d>=1000?(d/1000).toFixed(2)+' ms':d.toFixed(0)+' µs'}${sg.l?' · '+sg.l:''}`;break;}if(e<t)break;}}
+  if(!txt){tip.hidden=true;return;}
+  tip.textContent=txt;tip.hidden=false;tip.style.left=Math.min(Math.max(mx,150),r.width-150)+'px';const below=li<5;tip.style.top=(below?top+(li+1)*laneH+4:top+li*laneH-4)+'px';tip.style.transform=below?'translate(-50%,0)':'translate(-50%,-100%)';
+});
+cv.addEventListener('mouseleave',()=>tip.hidden=true);
+
+// loads
+const loadsEl=$('#loads');const loadRows={};
+[...TASKS,{id:'idle',name:'Idle (free CPU)',col:'--c-idle'}].forEach(t=>{const d=document.createElement('div');d.className='load';d.innerHTML=`<span class="nm">${t.name}</span><span class="pc">—</span><span class="tr"><i style="background:var(${t.col})"></i></span>`;loadsEl.appendChild(d);loadRows[t.id]={pc:d.querySelector('.pc'),bar:d.querySelector('i')};});
+function updateLoads(){const t1=sim.t,t0=Math.max(0,t1-1e6),span=t1-t0;if(span<=0)return;
+  for(const id in loadRows){const segs=sim.lanes[id].segs;let s=0;for(let i=segs.length-1;i>=0;i--){const g=segs[i];const e=g.t1===null?t1:g.t1;if(e<t0)break;if(g.s==='run'||g.s==='lock')s+=Math.min(e,t1)-Math.max(g.t0,t0);}
+    const p=100*s/span;loadRows[id].pc.textContent=(p<0.1&&p>0?'<0.1':p.toFixed(p<10?2:1))+' %';loadRows[id].bar.style.width=Math.min(100,p)+'%';}}
+
+/* ================= tour ================= */
+const SCENES=[
+ {t:'Power-on',sp:0.08,dur:11000,f:null,reset:true,x:'main() brings the core to 250 MHz, sets up I2C1, SPI5, the PWM timers, USART1 and Ethernet, creates the dann_hybrid network, then starts the scheduler with 7 tasks. Watch the two frames fill: the current frame is full after 200 ms, the vibration frame after about 760 ms (10 ms init delay plus 150 samples). Data_Processing produces nothing until both are full.'},
+ {t:'Motor_driver · priority 40',sp:0.02,dur:8000,f:['hw-motor','t-motor','s-speed'],w:['pwm','spd'],x:'The highest-priority task wakes every 5 ms with osDelayUntil, so its period does not drift. motor_control() runs the recording ramp: speed 1→100→1 to the right, then to the left, holding each step 1000, 500, 200, then 100 ms. It writes CCR = speed × 10 to TIM1 or TIM12 and stores speed for Data_Processing.'},
+ {t:'Current_sensor · priority 32',sp:0.02,dur:9000,f:['hw-ina','t-cur','s-ina'],w:['i2c','cfr'],x:'Two register reads per 5 ms over I2C at 100 kHz, about 470 µs each. The task starts a DMA transfer, then blocks on i2c_dma_sem; the DMA-complete interrupt gives the semaphore back. The CPU is free while the bus works. Samples go into a 40-slot ring (200 ms). Once full, every 3rd sample it recomputes Irms, Vrms, current variance and crest factor and sets cur_frame_ready.'},
+ {t:'Vibration_sensor · priority 32',sp:0.02,dur:9000,f:['hw-lis','t-vib','s-vib'],w:['spi','vfr'],x:'Same priority as the current task, so the two share the CPU in turns. It reads the LIS3DH status register over SPI DMA and, if new data is there, bursts 6 bytes of X/Y/Z. Glitches are rejected, and the magnitude √((x²+y²+z²)/3) goes into a 150-slot ring (750 ms). Every 3rd stored sample it computes rms, min, quartiles, max, variance and skewness, then sets vib_frame_ready.'},
+ {t:'Temp_sensor · priority 16',sp:0.25,dur:9000,f:['hw-ds','t-temp','s-temp'],w:['ow','tv'],x:'The DS18B20 is bit-banged on a GPIO. Each bit slot of 65–68 µs runs with the scheduler suspended so its timing holds. Between the two transactions the task sleeps 750 ms while the sensor converts, so one reading takes about 0.81 s. temp_slope_10s, the only temperature feature the model sees, is the change over the last 10 s.'},
+ {t:'Data_Processing · priority 24',sp:0.04,dur:10000,f:['s-speed','s-ina','s-vib','s-temp','dp','win'],w:['sp2dp','c2dp','v2dp','t2dp','dp2w'],x:'It polls the two flags each millisecond. When both are set it clears them, snapshots speed and the temperature slope, reads both feature structs, and builds the 14-value row in training order. PWM is speed ÷ 99, forced to 0 if the motor looks unpowered. The row goes to features[] for the dashboard and into the sliding window, then the task sleeps until 15 ms after the last row.'},
+ {t:'The sliding window and the semaphore',sp:0.1,dur:10000,f:['dp','win','ai'],w:['dp2w','w2ai'],x:'Each row shifts the 30×14 window one column left; colours show each value in training standard deviations. After the first 30 rows, and then every 10th row (150 ms), the window is copied to ai_ready_window under AI_Window_mutex and AI_Ready_sem is given. The AI task runs at a lower priority, so it starts as soon as Data_Processing goes back to sleep.'},
+ {t:'defaultTask runs the network',sp:0.1,dur:10000,f:['ai','res','uart'],w:['w2ai','ai2r','r2u'],x:'The window is copied, NaNs are replaced by training means, and the 420 values go into ai_dann_hybrid_run(). post_process() picks the top class, turns the anomaly logit into a probability, measures reconstruction error against a threshold for the current PWM band, and writes the mt_* globals. Printing the 10-row CSV block then busy-waits on the UART for about 13 ms, the longest single job in the system.'},
+ {t:'Ethernet and the browser',sp:0.25,dur:11000,f:['dp','res','eth','web'],w:['f2e','r2e','e2w'],x:'lwIP runs without its own thread (NO_SYS), entirely inside the lowest-priority task, which wakes every 100 ms to drain received frames and run timers. The page polls /data. fs_open() formats 14 features, 7 raw readings and 10 AI fields into one CSV line. Because the connection closes after each reply and the stack is only polled every 100 ms, the page refreshes about every 0.5 s.'},
+ {t:'All together',sp:0.04,dur:9000,f:null,x:'That is the whole loop: 200 Hz sampling, a feature row every 15 ms, a verdict every 150 ms, a web refresh about twice a second. The scheduler trace below shows the same run as a logic-analyzer capture. Try a fault scenario to see the decision path change.'},
+];
+let tour={on:false,i:0,t0:0,el:0};
+function setFocus(nodes,wires){
+  for(const id in N)N[id].g.classList.toggle('dim',!!nodes&&!nodes.includes(id));
+  gW.querySelectorAll('[data-w]').forEach(p=>p.classList.toggle('dim',!!nodes&&!(wires||[]).includes(p.dataset.w)));
+  gW.querySelectorAll('text').forEach(t=>t.classList.toggle('dim',!!nodes));
+}
+function showScene(i){
+  const s=SCENES[i];tour.i=i;tour.el=0;
+  if(s.reset){sim.reset();sim.D.fault=$('#faultSel').value;preroll(0);winDirty=verdictDirty=webDirty=true;}
+  setSpeed(s.sp);setFocus(s.f,s.w);
+  $('#capStep').textContent=`SCENE ${i+1} / ${SCENES.length}`;$('#capTitle').textContent=s.t;$('#capText').textContent=s.x;
+}
+function startTour(){tour.on=true;$('#capNav').hidden=false;$('#tourBtn').textContent='↺ Restart tour';setPlaying(true);showScene(0);}
+function endTour(){tour.on=false;$('#capNav').hidden=true;$('#tourBtn').textContent='▶ Guided tour';setFocus(null);
+  $('#capStep').textContent='FREE RUN';$('#capTitle').textContent='Everything at once';$('#capText').textContent='All seven tasks are running. Pick a slower speed to follow individual samples, or restart the guided tour.';}
+$('#tourBtn').onclick=startTour;$('#endTour').onclick=endTour;
+$('#nextScene').onclick=()=>{if(tour.i<SCENES.length-1)showScene(tour.i+1);else endTour();};
+$('#prevScene').onclick=()=>{if(tour.i>0)showScene(tour.i-1);};
+
+/* ================= controls ================= */
+function setSpeed(v){speed=v;document.querySelectorAll('#speedSeg button').forEach(b=>b.setAttribute('aria-pressed',String(Math.abs(+b.dataset.v-v)<1e-9)));}
+document.querySelectorAll('#speedSeg button').forEach(b=>b.onclick=()=>setSpeed(+b.dataset.v));
+document.querySelectorAll('#zoomSeg button').forEach(b=>b.onclick=()=>{zoom=+b.dataset.v;document.querySelectorAll('#zoomSeg button').forEach(x=>x.setAttribute('aria-pressed',String(x===b)));drawScope();});
+function setPlaying(p){playing=p;['#playBtn','#playBtn2'].forEach(s=>{const b=$(s);b.textContent=p?'Pause':'Play';b.setAttribute('aria-pressed',String(p));});}
+$('#playBtn').onclick=()=>setPlaying(!playing);$('#playBtn2').onclick=()=>setPlaying(!playing);
+$('#resetBtn').onclick=()=>{sim.reset();sim.D.fault=$('#faultSel').value;preroll(0);winDirty=verdictDirty=webDirty=true;V.uart.textContent='';setPlaying(true);};
+$('#faultSel').onchange=e=>{sim.D.fault=e.target.value;};
+setPlaying(playing);
+
+/* ================= decision panel ================= */
+const DROWS=[
+ {c:'Class is a fault (electrical, mechanical, thermal) and confidence ≥ 0.30',r:'ANOMALY · that class',cl:'an'},
+ {c:'Anomaly probability ≥ 0.486 <i>or</i> reconstruction MSE &gt; threshold for this class and PWM band',r:'ANOMALY · unknown_fault',cl:'an'},
+ {c:'Class is off, turning off, turning on or normal, and confidence ≥ 0.30',r:'NORMAL · that class',cl:'ok'},
+ {c:'Nothing above matched',r:'NORMAL · uncertain_safe',cl:'ok'},
+];
+const decEl=$('#decide');
+DROWS.forEach((d,i)=>{const r=document.createElement('div');r.className='drow';r.innerHTML=`<span class="n">${i+1}</span><div class="c">${d.c}<small></small></div><span class="r ${d.cl}">${d.r}</span>`;decEl.appendChild(r);});
+function updateDecision(r){
+  const rows=decEl.children;const det=[
+    `class ${r.cls_name} (${r.cls}) · confidence ${r.conf.toFixed(3)}`,
+    `p = ${r.ap.toFixed(3)} · MSE ${r.mse.toFixed(4)} vs ${r.th.toFixed(4)} (mean PWM ${r.mp.toFixed(2)})`,
+    `class ${r.cls_name} · confidence ${r.conf.toFixed(3)}`,''];
+  for(let i=0;i<4;i++){rows[i].classList.toggle('hit',i===r.branch);rows[i].classList.toggle('pass',i<r.branch);rows[i].querySelector('small').textContent=det[i];}
+  $('#verdictLine').innerHTML=`<span class="chip ${r.status==='NORMAL'?'ok':'an'}">${r.status}</span><span>state <code>${r.state}</code></span><span>severity <code>${r.sl}</code>${r.sl!=='n/a'?` (${r.sr.toFixed(2)}× baseline)`:''}</span>`;
+}
+
+/* ================= main loop ================= */
+let lastNow=performance.now(),loadAcc=0;
+function frame(now){
+  const dt=Math.min(100,now-lastNow);lastNow=now;
+  if(playing){sim.advanceTo(sim.t+Math.min(dt*1000*speed,60000));
+    if(tour.on){tour.el+=dt;$('#capProg').style.width=Math.min(100,100*tour.el/SCENES[tour.i].dur)+'%';if(tour.el>=SCENES[tour.i].dur){if(tour.i<SCENES.length-1)showScene(tour.i+1);else endTour();}}}
+  handleOut(now);updateMap(now,dt);moveDots(now);drawScope();
+  $('#simClock').textContent=(sim.t/1e6).toFixed(3)+' s';
+  loadAcc+=dt;if(loadAcc>300){loadAcc=0;updateLoads();}
+  requestAnimationFrame(frame);
+}
+requestAnimationFrame(frame);
+updateLoads();
+
+/* ================= static sections ================= */
+function redrawStatic(){buildLadder();buildArch();winDirty=true;verdictDirty=true;webDirty=true;}
+
+function buildLadder(){
+  const host=$('#ladder');host.innerHTML='';
+  const W=1200,H=410,ax=170,x0=70,x1=1150;const X=ms=>x0+(Math.log10(ms)-0)/(4-0)*(x1-x0); // 1 ms .. 10 s
+  const s=E('svg',{viewBox:`0 0 ${W} ${H}`,role:'img','aria-label':'Logarithmic time scale of every rate in the firmware'},host);
+  E('line',{x1:x0-20,y1:ax,x2:x1+20,y2:ax,class:'lad-axis'},s);
+  [[1,'1 ms'],[10,'10 ms'],[100,'100 ms'],[1000,'1 s'],[10000,'10 s']].forEach(([v,l])=>{E('line',{x1:X(v),y1:ax-6,x2:X(v),y2:ax+6,class:'lad-axis'},s);T(s,X(v),ax+20,l,'lad-tl','middle');
+    for(let k=2;k<10&&v<10000;k++)E('line',{x1:X(v*k),y1:ax-3,x2:X(v*k),y2:ax+3,class:'lad-tick'},s);});
+  T(s,x0-20,14,'HOW OFTEN IT HAPPENS','lad-band');T(s,x0-20,H-8,'HOW FAR BACK IT LOOKS','lad-band');
+  const up=[
+    [1,'1 ms','FreeRTOS tick','--c-isr',1],
+    [5,'5 ms','motor, current, vibration','--c-motor',2],
+    [15,'15 ms','feature row','--c-dp',1],
+    [100,'100 ms','lwIP poll','--c-eth',2],
+    [150,'150 ms','inference','--c-ai',1],
+    [500,'≈0.5 s','dashboard refresh','--c-eth',2],
+    [810,'≈0.81 s','temperature reading','--c-temp',1],
+  ];
+  const dn=[
+    [200,'200 ms','current frame, 40 samples','--c-cur',4],
+    [450,'450 ms','model window, 30 rows','--c-ai',3],
+    [750,'750 ms','vibration frame, 150 samples','--c-vib',2],
+    [1200,'≈1.2 s','power-on to first verdict','--c-dp',1],
+    [10000,'10 s','temperature slope','--c-temp',1],
+  ];
+  const lvl=[0,0,48,96,144];
+  up.forEach(([ms,v,n,c,l])=>{const x=X(ms);const ty=ax-30-lvl[l];
+    E('line',{x1:x,y1:ax,x2:x,y2:ty+6,class:'lad-lead',style:`stroke:var(${c})`},s);E('circle',{cx:x,cy:ax,r:4.5,style:`fill:var(${c})`},s);
+    T(s,x+6,ty-14,v,'lad-v');T(s,x+6,ty+2,n,'lad-n');});
+  dn.forEach(([ms,v,n,c,l])=>{const x=X(ms),ty=ax+44+lvl[l];const end=x>1050;
+    E('line',{x1:x,y1:ax,x2:x,y2:ty+18,class:'lad-lead',style:`stroke:var(${c})`},s);E('rect',{x:x-4,y:ax-4,width:8,height:8,style:`fill:var(${c})`},s);
+    T(s,end?x-6:x+6,ty,v,'lad-v',end?'end':null);T(s,end?x-6:x+6,ty+16,n,'lad-n',end?'end':null);});
+}
+function buildArch(){
+  const host=$('#arch');host.innerHTML='';
+  const s=E('svg',{viewBox:'0 0 1200 300',role:'img','aria-label':'Network architecture: shared input, autoencoder branch and classifier branch with two heads'},host);
+  const bx=(x,y,w,h,t,sub,col)=>{E('rect',{x,y,width:w,height:h,rx:6,class:'ar-box',style:col?`stroke:var(${col})`:''},s);T(s,x+w/2,y+h/2-(sub?3:-4),t,'ar-t','middle');if(sub)T(s,x+w/2,y+h/2+12,sub,'ar-s','middle');};
+  const ln=d=>E('path',{d,class:'ar-w'},s);
+  bx(10,118,110,64,'30 × 14','window input');
+  bx(150,118,120,64,'(x − μ) ÷ σ','in-model normalise');
+  bx(300,118,80,64,'420','flatten');
+  ln('M120,150 H150');ln('M270,150 H300');
+  T(s,420,34,'Autoencoder branch','ar-h');T(s,420,286,'Classifier branch','ar-h');
+  const top=[[420,'32'],[505,'24'],[590,'8','latent'],[675,'24'],[760,'32'],[845,'420','rebuilt']];
+  top.forEach(([x,t,sub],i)=>{bx(x,50,64,44,t,sub,i===2?'--c-ai':null);if(i)ln(`M${top[i-1][0]+64},72 H${x}`);});
+  ln('M380,140 C400,140 400,72 420,72');
+  bx(960,50,230,44,'recon → MSE vs input','gemm_11 · 420 values','--c-ai');ln('M909,72 H960');
+  const bot=[[420,'32'],[505,'24'],[590,'10','shared']];
+  bot.forEach(([x,t,sub],i)=>{bx(x,206,64,44,t,sub,i===2?'--c-ai':null);if(i)ln(`M${bot[i-1][0]+64},228 H${x}`);});
+  ln('M380,160 C400,160 400,228 420,228');
+  bx(700,150,64,40,'12');bx(845,150,64,40,'1','logit');ln('M654,222 C680,222 680,170 700,170');ln('M764,170 H845');
+  bx(960,150,230,40,'anomaly → sigmoid','gemm_20 · 1 value','--c-ai');ln('M909,170 H960');
+  bx(700,236,64,40,'24');bx(845,236,64,40,'7','softmax');ln('M654,234 C680,234 680,256 700,256');ln('M764,256 H845');
+  bx(960,236,230,40,'class → argmax','nl_23 · 7 probabilities','--c-ai');ln('M909,256 H960');
+}
+
+/* feature table */
+const FEATS=[
+ ['T_slope_10s','temp','temperature now minus 10 s ago (°C); updated once every 10 s'],
+ ['PWM','motor','speed ÷ 99, clipped to 1; 0 if Vrms ≤ 1 V and Irms ≤ 0.05 A'],
+ ['Irms','cur','√(mean I²) over the 40-sample current frame (A)'],
+ ['Vrms','cur','√(mean V²) over the same frame (V)'],
+ ['Current_Variance','cur','variance of I over the frame (A²)'],
+ ['Current_Crest_Factor','cur','max |I| ÷ Irms; spiky current raises it'],
+ ['Vib_RMS','vib','√(mean m²) over 150 magnitudes, m = √((x²+y²+z²)/3) (g)'],
+ ['Vib_Min','vib','smallest magnitude in the frame (g)'],
+ ['Vib_Q1','vib','sorted[37] of 150 (g)'],
+ ['Vib_Median','vib','mean of sorted[74] and sorted[75] (g)'],
+ ['Vib_Q3','vib','sorted[112] of 150 (g)'],
+ ['Vib_Max','vib','largest magnitude in the frame (g)'],
+ ['Vib_Variance','vib','variance of the 150 magnitudes (g²)'],
+ ['Vib_Skewness','vib','third central moment ÷ σ³; 0 if variance ≤ 1e-6'],
+];
+const TN={motor:'Motor_driver',cur:'Current_sensor',vib:'Vibration_sensor',temp:'Temp_sensor'};
+const TC={motor:'--c-motor',cur:'--c-cur',vib:'--c-vib',temp:'--c-temp',dp:'--c-dp',ai:'--c-ai',eth:'--c-eth'};
+$('#featTbl tbody').innerHTML=FEATS.map((f,i)=>`<tr><td class="num" style="text-align:left">${i}</td><td><code>${f[0]}</code></td><td><span class="who"><i style="background:var(${TC[f[1]]})"></i>${TN[f[1]]}</span></td><td>${f[2]}</td><td class="num">${NORM_MEAN[i].toPrecision(4)}</td><td class="num">${Math.sqrt(NORM_VAR[i]).toPrecision(4)}</td></tr>`).join('');
+
+$('#thTbl tbody').innerHTML=NORMAL_TH.map((t,i)=>`<tr><td class="mono">${PWM_EDGES[i].toFixed(1)} – ${i===7?'1.0 (incl.)':PWM_EDGES[i+1].toFixed(1)}</td><td class="num">${t.toFixed(4)}</td><td class="num">${LOCAL_BASE[i].toFixed(4)}</td></tr>`).join('');
+
+/* sync table */
+const who=(id,txt)=>`<span class="who"><i style="background:var(${TC[id]||'--c-isr'})"></i>${txt}</span>`;
+const SYNC=[
+ ['<code>I2C_mutex</code>','mutex',who('cur','Current_sensor'),who('cur','Current_sensor'),'Holds the I2C1 bus for one register read. Only one task uses I2C today, so it never contends.'],
+ ['<code>i2c_dma_sem</code>','binary semaphore',who('isr','I2C1 DMA-complete ISR'),who('cur','Current_sensor'),'Lets the task sleep while 2 bytes arrive over a ~470 µs transfer.'],
+ ['<code>spi_dma_sem</code>','binary semaphore',who('isr','SPI5 TX/RX-complete ISRs'),who('vib','Vibration_sensor'),'Same idea for each SPI DMA transfer to the LIS3DH.'],
+ ['<code>cur_frame_ready</code>','volatile flag',who('cur','Current_sensor, every 3rd sample'),who('dp','Data_Processing (reads and clears)'),'Says new current features exist. Checked and cleared inside a critical section.'],
+ ['<code>vib_frame_ready</code>','volatile flag',who('vib','Vibration_sensor, every 3rd stored sample'),who('dp','Data_Processing (reads and clears)'),'Says new vibration features exist. A row needs both flags.'],
+ ['feature structs, <code>speed</code>, <code>temp*</code>','critical sections',who('cur','sensor tasks'),who('dp','Data_Processing, Ethernet'),'taskENTER_CRITICAL around struct copies, so a reader never sees half an update.'],
+ ['<code>Feature_mutex</code>','mutex',who('dp','Data_Processing'),who('eth','(not taken by the web reader)'),'Guards features[14] for the dashboard. fs_open() reads it without the mutex.'],
+ ['<code>AI_Window_mutex</code>','mutex',who('dp','Data_Processing'),who('ai','defaultTask'),'Guards ai_ready_window while it is written or copied.'],
+ ['<code>AI_Ready_sem</code>','binary semaphore, max 1',who('dp','Data_Processing, every 10th row'),who('ai','defaultTask'),'Wakes the AI task. If it were still busy, an extra give would be lost.'],
+ ['<code>vTaskSuspendAll()</code>','scheduler lock',who('temp','Temp_sensor'),'all tasks','Keeps 1-Wire bit slots intact; no task switch for up to ~70 µs at a time.'],
+ ['<code>profile_start / profile_reset</code>','volatile flags',who('isr','USART1 RX ISR (s / x)'),who('motor','Motor_driver'),'Start or reset the motor ramp from a terminal.'],
+ ['<code>UART_mutex</code>','mutex','created','nobody','Never used; printf output from different tasks can interleave.'],
+];
+$('#syncTbl tbody').innerHTML=SYNC.map(r=>`<tr>${r.map((c,i)=>`<td${i===4?' style="min-width:260px"':''}>${c}</td>`).join('')}</tr>`).join('');
+
+/* task cards */
+const CARDS=[
+ {id:'motor',name:'Motor_driver',fn:'motor_driver() → motor_control() · Threads/motor/motor.c',pr:'High · 40',st:'8 KB',cad:'every 5 ms',run:'≈4 µs',
+  steps:['Wake on <b>osDelayUntil</b>, so the 5 ms period never drifts.','Check <code>profile_reset</code> (UART "x") and <code>profile_start</code> (UART "s"; starts as 1).','Advance the ramp: speed 1→100→1 right, then left; hold each step 1000, 500, 200, then 100 ms; stop after 4 phases.','Write CCR = speed × 10 (999 at 100) to TIM1 CH1 or TIM12 CH2.','Store the return value in <code>speed</code> inside a critical section.'],
+  w:'speed, ramp_tag, motor_direction',r:'profile_start, profile_reset'},
+ {id:'cur',name:'Current_sensor',fn:'Ina260_data() · Threads/current_sensor/current_data.c',pr:'AboveNormal · 32',st:'8 KB',cad:'every 5 ms (200 Hz)',run:'≈20 µs CPU, ≈0.95 ms on the bus',
+  steps:['At start: check the INA260 answers (halts if not), write config <code>0x6007</code> for fast conversions.','Read current (0x01) then bus voltage (0x02). Each read: take I2C_mutex, start DMA, block on <code>i2c_dma_sem</code>, release.','Scale by 1.25 mA and 1.25 mV per bit; update the 0.98/0.02 smoothed values for the dashboard.','Store into the 40-sample ring. Once full, every 3rd sample compute Irms, Vrms, variance and crest factor.','Publish the struct in one critical-section copy and set <code>cur_frame_ready</code>.'],
+  w:'feature_data, ina_data, current_rms, cur_frame_ready',r:'INA260 over I2C1'},
+ {id:'vib',name:'Vibration_sensor',fn:'Lis3dh_data() · Threads/vibration_sensor/vibration_data_spi.c',pr:'AboveNormal · 32',st:'8 KB',cad:'every 5 ms (200 Hz)',run:'≈20 µs, ≈100 µs on frame updates',
+  steps:['At start: CTRL_REG1 = 0x67 (200 Hz, XYZ on), CTRL_REG4 = 0x88 (block update, high resolution, ±2 g).','Read STATUS_REG over SPI DMA; if new X/Y/Z is ready, burst-read 6 bytes. Each transfer blocks on <code>spi_dma_sem</code>.','Reject impossible values, isolated zero axes, magnitudes outside 0.05–5 g and jumps over 0.5 g.','Store magnitudes of 0.2–1.5 g in the 150-sample ring. Once full, every 3rd stored sample: rms, min, Q1, median, Q3, max, variance, skewness.','Sanity-check the order min ≤ Q1 ≤ median ≤ Q3 ≤ max, publish, set <code>vib_frame_ready</code>.'],
+  w:'vib_feature_data, vib_data, vib_frame_ready',r:'LIS3DH over SPI5'},
+ {id:'dp',name:'Data_Processing',fn:'Data_Processing() · Core/Src/app_freertos.c',pr:'Normal · 24',st:'16 KB',cad:'one row ≈ every 15 ms',run:'≈20 µs per row',
+  steps:['In a critical section, check that <b>both</b> frame flags are set. If not: osDelay(1) and check again.','Clear both flags; snapshot <code>temp_slope_10s</code> and <code>speed</code>; read both feature structs.','Compute PWM = speed ÷ 99 (clipped; 0 if unpowered) and build the 14-value row.','Copy it to <code>features[]</code> under Feature_mutex for the dashboard.','Shift it into the 30-row window. After 30 rows, then every 10th row: copy to <code>ai_ready_window</code> and give <code>AI_Ready_sem</code>.','Sleep until 15 ms after this row (osDelayUntil).'],
+  w:'features[14], ai_live_window, ai_ready_window, AI_Ready_sem',r:'both flags, feature structs, speed, temp_slope_10s'},
+ {id:'ai',name:'defaultTask (AI)',fn:'StartDefaultTask() → MX_X_CUBE_AI_Process() · X-CUBE-AI/App/app_x-cube-ai.c',pr:'BelowNormal · 16',st:'16 KB',cad:'on demand, every 150 ms',run:'≈0.7 ms compute + ≈13 ms UART',
+  steps:['Block forever on <code>AI_Ready_sem</code>.','Copy the window under AI_Window_mutex; replace NaN with the training mean; keep a raw and a normalised copy.','Run <code>ai_dann_hybrid_run()</code>: the network normalises inside and returns 3 heads.','post_process(): argmax over 7 classes, sigmoid of the anomaly logit, MSE of rebuild vs normalised input, threshold from class and mean PWM, severity.','Write the <code>mt_*</code> globals read by the web server.','printf the newest 10 rows as CSV with the verdict on the last line.'],
+  w:'mt_status, mt_state, mt_class, mt_mse, mt_aprob, …, UART',r:'ai_ready_window'},
+ {id:'temp',name:'Temp_sensor',fn:'temp_data() → DS18B20_ReadTemp() · Threads/temp_sensor/Temp_Sensor.c',pr:'BelowNormal · 16',st:'8 KB',cad:'≈0.81 s per reading',run:'≈3.3 ms of bit slots per reading',
+  steps:['Reset pulse (osDelay 2 ms low), sample presence with IRQs off for 70 µs.','Send Skip ROM 0xCC, Convert T 0x44; each bit slot runs with the scheduler suspended.','Sleep 750 ms while the sensor converts.','Reset, Skip ROM, Read Scratchpad 0xBE, read 2 bytes; value ÷ 16 = °C.','Drop readings outside 10–50 °C or jumps over 2 °C; update <code>temp</code>, <code>temp_ai</code>, and every 10 s <code>temp_slope_10s</code>.','osDelay(50), repeat.'],
+  w:'temp, temp_ai, temp_slope_10s',r:'DS18B20 on 1-Wire GPIO'},
+ {id:'eth',name:'Ethernet_Communication',fn:'Lwip_ETH() · Threads/Ethernet/lwip/*',pr:'Low · 8',st:'12 KB',cad:'every 100 ms',run:'≈15 µs idle, ≈250 µs per /data reply',
+  steps:['ethernetif_input(): pull every received frame from the ETH DMA descriptors into lwIP.','sys_check_timeouts(): TCP, ARP and DHCP timers.','Link check every 100 ms; DHCP state machine every 500 ms (static 198.162.0.10 after 4 failed tries).','httpd handles requests here: <code>/</code> sends the dashboard page from flash; <code>/data</code> calls fs_open(), which formats 31 CSV fields from globals.','osDelay(100).'],
+  w:'network replies',r:'features[], mt_*, speed, ina_data, temp, vib_data'},
+];
+$('#cards').innerHTML=CARDS.map(c=>`<article class="card"><header><i class="sq" style="background:var(${TC[c.id]})"></i><h3>${c.name}</h3><span class="prio">${c.pr}</span><div class="fn">${c.fn}</div></header>
+<div class="kv"><div><span>Runs</span><b>${c.cad}</b></div><div><span>Stack</span><b>${c.st}</b></div><div><span>Work per run</span><b>${c.run}</b></div></div>
+<ol>${c.steps.map(s=>`<li>${s}</li>`).join('')}</ol>
+<div class="io"><span>Writes</span><code>${c.w}</code><span>Reads</span><code>${c.r}</code></div></article>`).join('');
+
+/* boot */
+const BOOT=[
+ ['reset','<b>HAL_Init, SystemClock_Config.</b> 25 MHz external clock through PLL1 (÷2, ×40, ÷2) gives 250 MHz; APB3 runs at 125 MHz.'],
+ ['init','<b>Peripherals.</b> GPIO, GPDMA1 (4 channels, IRQ priority 5), USART1 at 921 600 Bd, instruction cache, TIM7, TIM1 and TIM12 as PWM (250 MHz ÷ 167 ÷ 1000 ≈ 1.5 kHz), I2C1, ADC1 (left from the potentiometer mode, unused now), RTC, SPI5.'],
+ ['init','<b>MX_X_CUBE_AI_Init.</b> Creates the dann_hybrid instance on a 3.4 KB activation pool and binds its input and 3 output buffers.'],
+ ['init','<b>Odds and ends.</b> Arm the 1-byte UART receive interrupt, enable the DWT cycle counter for µs delays, start both PWM channels at 0 % and enable the H-bridge.'],
+ ['init','<b>Network.</b> lwip_init, netif_add (Ethernet MAC and PHY setup), dhcp_start, SSI handler, httpd_init on port 80.'],
+ ['init','<b>RTOS objects.</b> osKernelInitialize, then MX_FREERTOS_Init creates 4 mutexes, AI_Ready_sem and the 7 tasks.'],
+ ['0 ms','<b>osKernelStart.</b> Motor_driver runs first (highest priority) and the ramp starts immediately because profile_start begins at 1. The sensor tasks configure their chips; LIS3DH_Init busy-waits 10 ms.'],
+ ['≈200 ms','<b>Current frame full.</b> 40 samples in; cur_frame_ready starts setting every 15 ms. Data_Processing still waits for vibration.'],
+ ['≈760 ms','<b>Vibration frame full.</b> 150 stored samples; both flags now arrive every 15 ms and rows start flowing. The first temperature reading lands around 810 ms.'],
+ ['≈1.2 s','<b>First verdict.</b> The 30th row fills the window, AI_Ready_sem is given, the model runs and the first CSV block goes out. After that, a verdict every 150 ms.'],
+];
+$('#bootList').innerHTML=BOOT.map(b=>`<li><span class="when">${b[0]}</span><span class="what">${b[1]}</span></li>`).join('');
+
+/* findings */
+
+redrawStatic();
+})();
+</script>
+
+</body></html>

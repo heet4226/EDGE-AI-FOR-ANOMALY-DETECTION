@@ -1,0 +1,101 @@
+﻿<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 500" width="1200" height="500">
+<style>.s{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif} .m{font-family:ui-monospace,SFMono-Regular,'SF Mono',Menlo,Consolas,'Liberation Mono',monospace} .t{fill:#E6EDF3} .t2{fill:#9198A1} .t3{fill:#6E7681}.wire{fill:none;stroke:#3D444D;stroke-width:1.4}.box{fill:#0D1117;stroke:#3D444D;stroke-width:1.2}@keyframes b_classic{0%,22%,100%{fill:#212830}6%{fill:#5C9EEA}}.l_classic{fill:#212830;animation:b_classic 3.2s infinite}@keyframes b_nn{0%,22%,100%{fill:#212830}6%{fill:#2EC4B8}}.l_nn{fill:#212830;animation:b_nn 3.2s infinite}@keyframes b_anomaly{0%,22%,100%{fill:#212830}6%{fill:#EDAE47}}.l_anomaly{fill:#212830;animation:b_anomaly 3.2s infinite}@keyframes b_hybrid{0%,22%,100%{fill:#212830}6%{fill:#F06B7C}}.l_hybrid{fill:#212830;animation:b_hybrid 3.2s infinite}@media (prefers-reduced-motion: reduce){*{animation:none!important}}</style>
+<rect width="1200" height="500" rx="12" fill="#151B23" stroke="#3D444D"/>
+<text x="18" y="32" class="m t3" font-size="11" letter-spacing="1">SENSORS · 200 Hz</text>
+<text x="262" y="32" class="m t3" font-size="11" letter-spacing="1">ON-DEVICE PREPROCESSING</text>
+<text x="506" y="32" class="m t3" font-size="11" letter-spacing="1">MODELS · 22</text>
+<text x="780" y="32" class="m t3" font-size="11" letter-spacing="1">EVALUATION</text>
+<text x="1034" y="32" class="m t3" font-size="11" letter-spacing="1">OUTPUTS</text>
+<path class="wire" d="M113.0 94.0 C235.0 94.0 235.0 112.0 357.0 112.0"/>
+<path class="wire" d="M113.0 201.3 C235.0 201.3 235.0 112.0 357.0 112.0"/>
+<path class="wire" d="M113.0 308.7 C235.0 308.7 235.0 112.0 357.0 112.0"/>
+<path class="wire" d="M113.0 416.0 C235.0 416.0 235.0 112.0 357.0 112.0"/>
+<path class="wire" d="M357.0 112.0 L357.0 255.0"/>
+<path class="wire" d="M357.0 255.0 L357.0 398.0"/>
+<path class="wire" d="M357.0 398.0 C486.5 398.0 486.5 91.0 616.0 91.0"/>
+<path class="wire" d="M357.0 398.0 C486.5 398.0 486.5 200.3 616.0 200.3"/>
+<path class="wire" d="M357.0 398.0 C486.5 398.0 486.5 309.7 616.0 309.7"/>
+<path class="wire" d="M357.0 398.0 C486.5 398.0 486.5 419.0 616.0 419.0"/>
+<path class="wire" d="M616.0 91.0 C748.0 91.0 748.0 164.0 880.0 164.0"/>
+<path class="wire" d="M616.0 200.3 C748.0 200.3 748.0 164.0 880.0 164.0"/>
+<path class="wire" d="M616.0 309.7 C748.0 309.7 748.0 164.0 880.0 164.0"/>
+<path class="wire" d="M616.0 419.0 C748.0 419.0 748.0 164.0 880.0 164.0"/>
+<path class="wire" d="M880.0 164.0 L880.0 346.0"/>
+<path class="wire" d="M880.0 346.0 C994.5 346.0 994.5 104.0 1109.0 104.0"/>
+<path class="wire" d="M880.0 346.0 C994.5 346.0 994.5 255.0 1109.0 255.0"/>
+<path class="wire" d="M880.0 346.0 C994.5 346.0 994.5 406.0 1109.0 406.0"/>
+<circle r="4.5" fill="#5C9EEA" stroke="#151B23" stroke-width="1.5"><animateMotion dur="7.0s" begin="-0.00s" repeatCount="indefinite" path="M113.0 94.0 C235.0 94.0 235.0 112.0 357.0 112.0 L357.0 255.0 L357.0 398.0 C486.5 398.0 486.5 91.0 616.0 91.0 C748.0 91.0 748.0 164.0 880.0 164.0 L880.0 346.0 C994.5 346.0 994.5 104.0 1109.0 104.0"/><animate attributeName="fill" dur="7.0s" begin="-0.00s" repeatCount="indefinite" calcMode="discrete" values="#5C9EEA;#5C9EEA" keyTimes="0;0.541"/></circle>
+<circle r="4.5" fill="#8FB0CC" stroke="#151B23" stroke-width="1.5"><animateMotion dur="7.0s" begin="-0.44s" repeatCount="indefinite" path="M113.0 201.3 C235.0 201.3 235.0 112.0 357.0 112.0 L357.0 255.0 L357.0 398.0 C486.5 398.0 486.5 419.0 616.0 419.0 C748.0 419.0 748.0 164.0 880.0 164.0 L880.0 346.0 C994.5 346.0 994.5 406.0 1109.0 406.0"/><animate attributeName="fill" dur="7.0s" begin="-0.44s" repeatCount="indefinite" calcMode="discrete" values="#8FB0CC;#F06B7C" keyTimes="0;0.501"/></circle>
+<circle r="4.5" fill="#C5D0D8" stroke="#151B23" stroke-width="1.5"><animateMotion dur="7.0s" begin="-0.88s" repeatCount="indefinite" path="M113.0 308.7 C235.0 308.7 235.0 112.0 357.0 112.0 L357.0 255.0 L357.0 398.0 C486.5 398.0 486.5 309.7 616.0 309.7 C748.0 309.7 748.0 164.0 880.0 164.0 L880.0 346.0 C994.5 346.0 994.5 255.0 1109.0 255.0"/><animate attributeName="fill" dur="7.0s" begin="-0.88s" repeatCount="indefinite" calcMode="discrete" values="#C5D0D8;#EDAE47" keyTimes="0;0.545"/></circle>
+<circle r="4.5" fill="#6F808C" stroke="#151B23" stroke-width="1.5"><animateMotion dur="7.0s" begin="-1.31s" repeatCount="indefinite" path="M113.0 416.0 C235.0 416.0 235.0 112.0 357.0 112.0 L357.0 255.0 L357.0 398.0 C486.5 398.0 486.5 200.3 616.0 200.3 C748.0 200.3 748.0 164.0 880.0 164.0 L880.0 346.0 C994.5 346.0 994.5 104.0 1109.0 104.0"/><animate attributeName="fill" dur="7.0s" begin="-1.31s" repeatCount="indefinite" calcMode="discrete" values="#6F808C;#2EC4B8" keyTimes="0;0.565"/></circle>
+<circle r="4.5" fill="#5C9EEA" stroke="#151B23" stroke-width="1.5"><animateMotion dur="7.0s" begin="-1.75s" repeatCount="indefinite" path="M113.0 94.0 C235.0 94.0 235.0 112.0 357.0 112.0 L357.0 255.0 L357.0 398.0 C486.5 398.0 486.5 91.0 616.0 91.0 C748.0 91.0 748.0 164.0 880.0 164.0 L880.0 346.0 C994.5 346.0 994.5 406.0 1109.0 406.0"/><animate attributeName="fill" dur="7.0s" begin="-1.75s" repeatCount="indefinite" calcMode="discrete" values="#5C9EEA;#5C9EEA" keyTimes="0;0.577"/></circle>
+<circle r="4.5" fill="#8FB0CC" stroke="#151B23" stroke-width="1.5"><animateMotion dur="7.0s" begin="-2.19s" repeatCount="indefinite" path="M113.0 201.3 C235.0 201.3 235.0 112.0 357.0 112.0 L357.0 255.0 L357.0 398.0 C486.5 398.0 486.5 419.0 616.0 419.0 C748.0 419.0 748.0 164.0 880.0 164.0 L880.0 346.0 C994.5 346.0 994.5 255.0 1109.0 255.0"/><animate attributeName="fill" dur="7.0s" begin="-2.19s" repeatCount="indefinite" calcMode="discrete" values="#8FB0CC;#F06B7C" keyTimes="0;0.497"/></circle>
+<circle r="4.5" fill="#C5D0D8" stroke="#151B23" stroke-width="1.5"><animateMotion dur="7.0s" begin="-2.62s" repeatCount="indefinite" path="M113.0 308.7 C235.0 308.7 235.0 112.0 357.0 112.0 L357.0 255.0 L357.0 398.0 C486.5 398.0 486.5 309.7 616.0 309.7 C748.0 309.7 748.0 164.0 880.0 164.0 L880.0 346.0 C994.5 346.0 994.5 104.0 1109.0 104.0"/><animate attributeName="fill" dur="7.0s" begin="-2.62s" repeatCount="indefinite" calcMode="discrete" values="#C5D0D8;#EDAE47" keyTimes="0;0.514"/></circle>
+<circle r="4.5" fill="#6F808C" stroke="#151B23" stroke-width="1.5"><animateMotion dur="7.0s" begin="-3.06s" repeatCount="indefinite" path="M113.0 416.0 C235.0 416.0 235.0 112.0 357.0 112.0 L357.0 255.0 L357.0 398.0 C486.5 398.0 486.5 200.3 616.0 200.3 C748.0 200.3 748.0 164.0 880.0 164.0 L880.0 346.0 C994.5 346.0 994.5 406.0 1109.0 406.0"/><animate attributeName="fill" dur="7.0s" begin="-3.06s" repeatCount="indefinite" calcMode="discrete" values="#6F808C;#2EC4B8" keyTimes="0;0.602"/></circle>
+<circle r="4.5" fill="#5C9EEA" stroke="#151B23" stroke-width="1.5"><animateMotion dur="7.0s" begin="-3.50s" repeatCount="indefinite" path="M113.0 94.0 C235.0 94.0 235.0 112.0 357.0 112.0 L357.0 255.0 L357.0 398.0 C486.5 398.0 486.5 91.0 616.0 91.0 C748.0 91.0 748.0 164.0 880.0 164.0 L880.0 346.0 C994.5 346.0 994.5 255.0 1109.0 255.0"/><animate attributeName="fill" dur="7.0s" begin="-3.50s" repeatCount="indefinite" calcMode="discrete" values="#5C9EEA;#5C9EEA" keyTimes="0;0.573"/></circle>
+<circle r="4.5" fill="#8FB0CC" stroke="#151B23" stroke-width="1.5"><animateMotion dur="7.0s" begin="-3.94s" repeatCount="indefinite" path="M113.0 201.3 C235.0 201.3 235.0 112.0 357.0 112.0 L357.0 255.0 L357.0 398.0 C486.5 398.0 486.5 419.0 616.0 419.0 C748.0 419.0 748.0 164.0 880.0 164.0 L880.0 346.0 C994.5 346.0 994.5 104.0 1109.0 104.0"/><animate attributeName="fill" dur="7.0s" begin="-3.94s" repeatCount="indefinite" calcMode="discrete" values="#8FB0CC;#F06B7C" keyTimes="0;0.468"/></circle>
+<circle r="4.5" fill="#C5D0D8" stroke="#151B23" stroke-width="1.5"><animateMotion dur="7.0s" begin="-4.38s" repeatCount="indefinite" path="M113.0 308.7 C235.0 308.7 235.0 112.0 357.0 112.0 L357.0 255.0 L357.0 398.0 C486.5 398.0 486.5 309.7 616.0 309.7 C748.0 309.7 748.0 164.0 880.0 164.0 L880.0 346.0 C994.5 346.0 994.5 406.0 1109.0 406.0"/><animate attributeName="fill" dur="7.0s" begin="-4.38s" repeatCount="indefinite" calcMode="discrete" values="#C5D0D8;#EDAE47" keyTimes="0;0.549"/></circle>
+<circle r="4.5" fill="#6F808C" stroke="#151B23" stroke-width="1.5"><animateMotion dur="7.0s" begin="-4.81s" repeatCount="indefinite" path="M113.0 416.0 C235.0 416.0 235.0 112.0 357.0 112.0 L357.0 255.0 L357.0 398.0 C486.5 398.0 486.5 200.3 616.0 200.3 C748.0 200.3 748.0 164.0 880.0 164.0 L880.0 346.0 C994.5 346.0 994.5 255.0 1109.0 255.0"/><animate attributeName="fill" dur="7.0s" begin="-4.81s" repeatCount="indefinite" calcMode="discrete" values="#6F808C;#2EC4B8" keyTimes="0;0.597"/></circle>
+<circle r="4.5" fill="#5C9EEA" stroke="#151B23" stroke-width="1.5"><animateMotion dur="7.0s" begin="-5.25s" repeatCount="indefinite" path="M113.0 94.0 C235.0 94.0 235.0 112.0 357.0 112.0 L357.0 255.0 L357.0 398.0 C486.5 398.0 486.5 91.0 616.0 91.0 C748.0 91.0 748.0 164.0 880.0 164.0 L880.0 346.0 C994.5 346.0 994.5 104.0 1109.0 104.0"/><animate attributeName="fill" dur="7.0s" begin="-5.25s" repeatCount="indefinite" calcMode="discrete" values="#5C9EEA;#5C9EEA" keyTimes="0;0.541"/></circle>
+<circle r="4.5" fill="#8FB0CC" stroke="#151B23" stroke-width="1.5"><animateMotion dur="7.0s" begin="-5.69s" repeatCount="indefinite" path="M113.0 201.3 C235.0 201.3 235.0 112.0 357.0 112.0 L357.0 255.0 L357.0 398.0 C486.5 398.0 486.5 419.0 616.0 419.0 C748.0 419.0 748.0 164.0 880.0 164.0 L880.0 346.0 C994.5 346.0 994.5 406.0 1109.0 406.0"/><animate attributeName="fill" dur="7.0s" begin="-5.69s" repeatCount="indefinite" calcMode="discrete" values="#8FB0CC;#F06B7C" keyTimes="0;0.501"/></circle>
+<circle r="4.5" fill="#C5D0D8" stroke="#151B23" stroke-width="1.5"><animateMotion dur="7.0s" begin="-6.12s" repeatCount="indefinite" path="M113.0 308.7 C235.0 308.7 235.0 112.0 357.0 112.0 L357.0 255.0 L357.0 398.0 C486.5 398.0 486.5 309.7 616.0 309.7 C748.0 309.7 748.0 164.0 880.0 164.0 L880.0 346.0 C994.5 346.0 994.5 255.0 1109.0 255.0"/><animate attributeName="fill" dur="7.0s" begin="-6.12s" repeatCount="indefinite" calcMode="discrete" values="#C5D0D8;#EDAE47" keyTimes="0;0.545"/></circle>
+<circle r="4.5" fill="#6F808C" stroke="#151B23" stroke-width="1.5"><animateMotion dur="7.0s" begin="-6.56s" repeatCount="indefinite" path="M113.0 416.0 C235.0 416.0 235.0 112.0 357.0 112.0 L357.0 255.0 L357.0 398.0 C486.5 398.0 486.5 200.3 616.0 200.3 C748.0 200.3 748.0 164.0 880.0 164.0 L880.0 346.0 C994.5 346.0 994.5 104.0 1109.0 104.0"/><animate attributeName="fill" dur="7.0s" begin="-6.56s" repeatCount="indefinite" calcMode="discrete" values="#6F808C;#2EC4B8" keyTimes="0;0.565"/></circle>
+<rect class="box" x="18" y="48.0" width="190" height="92" rx="8"/><rect x="18" y="58.0" width="3" height="72" rx="1.5" fill="#5C9EEA"/><text x="32" y="70.0" class="s t" font-size="14" font-weight="600">Current &amp; voltage</text>
+<text x="32" y="86.0" class="m t3" font-size="10.5">INA260 · I²C</text><text x="32" y="124.0" class="s t" font-size="24" font-weight="700">200<tspan class="m t2" font-size="10.5" font-weight="400" dx="6">Hz</tspan></text>
+<rect class="box" x="18" y="155.3" width="190" height="92" rx="8"/><rect x="18" y="165.3" width="3" height="72" rx="1.5" fill="#8FB0CC"/><text x="32" y="177.3" class="s t" font-size="14" font-weight="600">Vibration</text>
+<text x="32" y="193.3" class="m t3" font-size="10.5">LIS3DH · SPI</text><text x="32" y="231.3" class="s t" font-size="24" font-weight="700">200<tspan class="m t2" font-size="10.5" font-weight="400" dx="6">Hz</tspan></text>
+<rect class="box" x="18" y="262.7" width="190" height="92" rx="8"/><rect x="18" y="272.7" width="3" height="72" rx="1.5" fill="#C5D0D8"/><text x="32" y="284.7" class="s t" font-size="14" font-weight="600">Temperature</text>
+<text x="32" y="300.7" class="m t3" font-size="10.5">DS18B20 · 1-Wire</text><text x="32" y="338.7" class="s t" font-size="24" font-weight="700">1.25<tspan class="m t2" font-size="10.5" font-weight="400" dx="6">Hz</tspan></text>
+<rect class="box" x="18" y="370.0" width="190" height="92" rx="8"/><rect x="18" y="380.0" width="3" height="72" rx="1.5" fill="#6F808C"/><text x="32" y="392.0" class="s t" font-size="14" font-weight="600">PWM command</text>
+<text x="32" y="408.0" class="m t3" font-size="10.5">BTS7960 H-bridge</text><text x="32" y="446.0" class="s t" font-size="24" font-weight="700">0–100<tspan class="m t2" font-size="10.5" font-weight="400" dx="6">%</tspan></text>
+<rect class="box" x="262" y="60.0" width="190" height="104" rx="8"/><rect x="262" y="70.0" width="3" height="84" rx="1.5" fill="#6E7681"/><text x="276" y="82.0" class="s t" font-size="14" font-weight="600">Feature extraction</text>
+<text x="276" y="98.0" class="m t3" font-size="10.5">firmware · every 15 ms</text><text x="276" y="148.0" class="s t" font-size="24" font-weight="700">14<tspan class="m t2" font-size="10.5" font-weight="400" dx="6">features</tspan></text>
+<rect class="box" x="262" y="203.0" width="190" height="104" rx="8"/><rect x="262" y="213.0" width="3" height="84" rx="1.5" fill="#6E7681"/><text x="276" y="225.0" class="s t" font-size="14" font-weight="600">Sliding window</text>
+<text x="276" y="241.0" class="m t3" font-size="10.5">30 vectors · step 10</text><text x="276" y="291.0" class="s t" font-size="24" font-weight="700">30×14<tspan class="m t2" font-size="10.5" font-weight="400" dx="6">input</tspan></text>
+<rect class="box" x="262" y="346.0" width="190" height="104" rx="8"/><rect x="262" y="356.0" width="3" height="84" rx="1.5" fill="#6E7681"/><text x="276" y="368.0" class="s t" font-size="14" font-weight="600">Session-wise CV</text>
+<text x="276" y="384.0" class="m t3" font-size="10.5">StratifiedGroupKFold</text><text x="276" y="434.0" class="s t" font-size="24" font-weight="700">5<tspan class="m t2" font-size="10.5" font-weight="400" dx="6">folds</tspan></text>
+<rect class="box" x="506" y="48.0" width="220" height="86" rx="8"/><rect x="506" y="58.0" width="3" height="66" rx="1.5" fill="#5C9EEA"/><text x="520" y="70.0" class="s t" font-size="14" font-weight="600">Classical ML</text>
+<text x="520" y="86.0" class="m t3" font-size="10.5">6 models</text>
+<circle cx="526" cy="104.0" r="5.5" class="l_classic" stroke="#3D444D" style="animation-delay:0.73s"/>
+<circle cx="543" cy="104.0" r="5.5" class="l_classic" stroke="#3D444D" style="animation-delay:1.46s"/>
+<circle cx="560" cy="104.0" r="5.5" class="l_classic" stroke="#3D444D" style="animation-delay:2.19s"/>
+<circle cx="577" cy="104.0" r="5.5" class="l_classic" stroke="#3D444D" style="animation-delay:2.92s"/>
+<circle cx="594" cy="104.0" r="5.5" class="l_classic" stroke="#3D444D" style="animation-delay:0.45s"/>
+<circle cx="611" cy="104.0" r="5.5" class="l_classic" stroke="#3D444D" style="animation-delay:1.18s"/>
+<text x="714" y="122.0" text-anchor="end" class="m t2" font-size="10.5">best 96.4%</text>
+<rect class="box" x="506" y="157.3" width="220" height="86" rx="8"/><rect x="506" y="167.3" width="3" height="66" rx="1.5" fill="#2EC4B8"/><text x="520" y="179.3" class="s t" font-size="14" font-weight="600">Neural networks</text>
+<text x="520" y="195.3" class="m t3" font-size="10.5">5 models</text>
+<circle cx="526" cy="213.3" r="5.5" class="l_nn" stroke="#3D444D" style="animation-delay:1.91s"/>
+<circle cx="543" cy="213.3" r="5.5" class="l_nn" stroke="#3D444D" style="animation-delay:2.64s"/>
+<circle cx="560" cy="213.3" r="5.5" class="l_nn" stroke="#3D444D" style="animation-delay:0.17s"/>
+<circle cx="577" cy="213.3" r="5.5" class="l_nn" stroke="#3D444D" style="animation-delay:0.90s"/>
+<circle cx="594" cy="213.3" r="5.5" class="l_nn" stroke="#3D444D" style="animation-delay:1.63s"/>
+<text x="714" y="231.3" text-anchor="end" class="m t2" font-size="10.5">best 96.8%</text>
+<rect class="box" x="506" y="266.7" width="220" height="86" rx="8"/><rect x="506" y="276.7" width="3" height="66" rx="1.5" fill="#EDAE47"/><text x="520" y="288.7" class="s t" font-size="14" font-weight="600">Anomaly detection</text>
+<text x="520" y="304.7" class="m t3" font-size="10.5">7 models</text>
+<circle cx="526" cy="322.7" r="5.5" class="l_anomaly" stroke="#3D444D" style="animation-delay:2.36s"/>
+<circle cx="543" cy="322.7" r="5.5" class="l_anomaly" stroke="#3D444D" style="animation-delay:3.09s"/>
+<circle cx="560" cy="322.7" r="5.5" class="l_anomaly" stroke="#3D444D" style="animation-delay:0.62s"/>
+<circle cx="577" cy="322.7" r="5.5" class="l_anomaly" stroke="#3D444D" style="animation-delay:1.35s"/>
+<circle cx="594" cy="322.7" r="5.5" class="l_anomaly" stroke="#3D444D" style="animation-delay:2.08s"/>
+<circle cx="611" cy="322.7" r="5.5" class="l_anomaly" stroke="#3D444D" style="animation-delay:2.81s"/>
+<circle cx="628" cy="322.7" r="5.5" class="l_anomaly" stroke="#3D444D" style="animation-delay:0.34s"/>
+<text x="714" y="340.7" text-anchor="end" class="m t2" font-size="10.5">best 90.1%</text>
+<rect class="box" x="506" y="376.0" width="220" height="86" rx="8"/><rect x="506" y="386.0" width="3" height="66" rx="1.5" fill="#F06B7C"/><text x="520" y="398.0" class="s t" font-size="14" font-weight="600">Hybrid multi-task</text>
+<text x="520" y="414.0" class="m t3" font-size="10.5">4 models</text>
+<circle cx="526" cy="432.0" r="5.5" class="l_hybrid" stroke="#3D444D" style="animation-delay:1.07s"/>
+<circle cx="543" cy="432.0" r="5.5" class="l_hybrid" stroke="#3D444D" style="animation-delay:1.80s"/>
+<circle cx="560" cy="432.0" r="5.5" class="l_hybrid" stroke="#3D444D" style="animation-delay:2.53s"/>
+<circle cx="577" cy="432.0" r="5.5" class="l_hybrid" stroke="#3D444D" style="animation-delay:0.06s"/>
+<text x="714" y="450.0" text-anchor="end" class="m t2" font-size="10.5">best 97.1%</text>
+<rect class="box" x="780" y="108.0" width="200" height="112" rx="8"/><rect x="780" y="118.0" width="3" height="92" rx="1.5" fill="#6E7681"/><text x="794" y="130.0" class="s t" font-size="14" font-weight="600">Unseen recordings</text>
+<text x="794" y="146.0" class="m t3" font-size="10.5">7 test sessions</text><text x="794" y="204.0" class="s t" font-size="24" font-weight="700">2,582<tspan class="m t2" font-size="10.5" font-weight="400" dx="6">scored windows</tspan></text>
+<rect class="box" x="780" y="290.0" width="200" height="112" rx="8"/><rect x="780" y="300.0" width="3" height="92" rx="1.5" fill="#6E7681"/><text x="794" y="312.0" class="s t" font-size="14" font-weight="600">On-target (MCU)</text>
+<text x="794" y="328.0" class="m t3" font-size="10.5">X-CUBE-AI · Cortex-M33</text><text x="794" y="386.0" class="s t" font-size="24" font-weight="700">20/22<tspan class="m t2" font-size="10.5" font-weight="400" dx="6">deployed</tspan></text>
+<rect class="box" x="1034" y="48.0" width="150" height="112" rx="8"/><rect x="1034" y="58.0" width="3" height="92" rx="1.5" fill="#6E7681"/><text x="1048" y="70.0" class="s t" font-size="14" font-weight="600">Live dashboard</text>
+<text x="1048" y="86.0" class="m t3" font-size="10.5">Ethernet · lwIP</text><text x="1048" y="144.0" class="s t" font-size="24" font-weight="700">150<tspan class="m t2" font-size="10.5" font-weight="400" dx="6">ms updates</tspan></text>
+<rect class="box" x="1034" y="199.0" width="150" height="112" rx="8"/><rect x="1034" y="209.0" width="3" height="92" rx="1.5" fill="#6E7681"/><text x="1048" y="221.0" class="s t" font-size="14" font-weight="600">Firmware</text>
+<text x="1048" y="237.0" class="m t3" font-size="10.5">FreeRTOS · 7 tasks</text><text x="1048" y="295.0" class="s t" font-size="24" font-weight="700">STM32<tspan class="m t2" font-size="10.5" font-weight="400" dx="6">H573</tspan></text>
+<rect class="box" x="1034" y="350.0" width="150" height="112" rx="8"/><rect x="1034" y="360.0" width="3" height="92" rx="1.5" fill="#3FB950"/><text x="1048" y="372.0" class="s t" font-size="14" font-weight="600">Best model</text>
+<text x="1048" y="388.0" class="m t3" font-size="10.5">MLP hybrid</text><text x="1048" y="446.0" class="s t" font-size="24" font-weight="700">97.1%<tspan class="m t2" font-size="10.5" font-weight="400" dx="6">Test score</tspan></text>
+<text x="1182" y="486" text-anchor="end" class="m t3" font-size="11">▶ CLICK FOR THE INTERACTIVE VERSION</text></svg>

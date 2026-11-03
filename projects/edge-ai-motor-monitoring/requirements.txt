@@ -1,0 +1,14 @@
+numpy
+pandas
+openpyxl
+matplotlib
+scikit-learn
+xgboost
+tensorflow>=2.16
+tf2onnx
+onnx
+onnxruntime
+onnxmltools
+skl2onnx
+joblib
+jupyterlab

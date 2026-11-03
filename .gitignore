@@ -1,0 +1,14 @@
+# never commit raw recordings, trained weights or local outputs
+projects/*/data/*
+!projects/*/data/README.md
+**/outputs/
+*.tflite
+*.onnx
+*.keras
+*.h5
+*.pkl
+*.joblib
+.ipynb_checkpoints/
+__pycache__/
+.DS_Store
+Thumbs.db

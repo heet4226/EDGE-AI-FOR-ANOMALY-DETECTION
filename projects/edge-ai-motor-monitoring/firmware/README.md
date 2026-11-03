@@ -2,7 +2,7 @@
 
 The application code that runs the sensing, the feature extraction, the inference and the web dashboard on an **STM32H573I-DK** board (Cortex-M33 at 250 MHz).
 
-**▶ [Interactive firmware map](https://Heet4226.github.io/machine-learning-portfolio/edge-ai-motor-monitoring/firmware.html):** a live timing simulation of the tasks, buffers and data flow.
+**▶ [Interactive firmware map](https://Heet4226.github.io/edge-ai-for-anomaly-detection/edge-ai-motor-monitoring/firmware.html):** a live timing simulation of the tasks, buffers and data flow.
 
 ## Tasks
 

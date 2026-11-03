@@ -25,7 +25,7 @@ I build machine-learning systems end to end: from sensors and data collection, t
 
 | Project | Area | Highlights |
 |---|---|---|
-| [**Edge AI Motor Condition Monitoring on STM32**](projects/edge-ai-motor-monitoring/) | Edge AI · TinyML · anomaly detection | 22 classical, deep, unsupervised and multi-task models benchmarked on accuracy, false alarms, memory and latency; multi-task network deployed in FreeRTOS firmware with a live web dashboard · [interactive overview](https://Heet4226.github.io/machine-learning-portfolio/edge-ai-motor-monitoring/) |
+| [**Edge AI Motor Condition Monitoring on STM32**](projects/edge-ai-motor-monitoring/) | Edge AI · TinyML · anomaly detection | 22 classical, deep, unsupervised and multi-task models benchmarked on accuracy, false alarms, memory and latency; multi-task network deployed in FreeRTOS firmware with a live web dashboard · [interactive overview](https://Heet4226.github.io/edge-ai-for-anomaly-detection/edge-ai-motor-monitoring/) |
 
 ## Skills shown here
 

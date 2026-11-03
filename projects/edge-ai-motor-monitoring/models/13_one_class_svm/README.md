@@ -30,7 +30,7 @@
 
 ### Results from the notebook
 
-<sub>Cross-validation and training plots, and the notebook's manual test on one example recording (named in the plot title).</sub>
+<sub>Cross-validation and training plots from the notebook.</sub>
 
 <a href="figures/fig_01.png"><img src="figures/fig_01.png" width="49%" alt="One-Class SVM result plot 1"></a>
 <a href="figures/fig_02.png"><img src="figures/fig_02.png" width="49%" alt="One-Class SVM result plot 2"></a>
@@ -38,8 +38,6 @@
 <a href="figures/fig_04.png"><img src="figures/fig_04.png" width="49%" alt="One-Class SVM result plot 4"></a>
 <a href="figures/fig_05.png"><img src="figures/fig_05.png" width="49%" alt="One-Class SVM result plot 5"></a>
 <a href="figures/fig_06.png"><img src="figures/fig_06.png" width="49%" alt="One-Class SVM result plot 6"></a>
-<a href="figures/fig_07.png"><img src="figures/fig_07.png" width="49%" alt="One-Class SVM result plot 7"></a>
-<a href="figures/fig_08.png"><img src="figures/fig_08.png" width="49%" alt="One-Class SVM result plot 8"></a>
 
 ### Tests on the fault recordings
 

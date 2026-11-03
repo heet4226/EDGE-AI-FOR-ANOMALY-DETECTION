@@ -29,12 +29,11 @@
 
 ### Results from the notebook
 
-<sub>Cross-validation and training plots, and the notebook's manual test on one example recording (named in the plot title).</sub>
+<sub>Cross-validation and training plots from the notebook.</sub>
 
 <a href="figures/fig_01.png"><img src="figures/fig_01.png" width="49%" alt="LSTM result plot 1"></a>
 <a href="figures/fig_02.png"><img src="figures/fig_02.png" width="49%" alt="LSTM result plot 2"></a>
 <a href="figures/fig_03.png"><img src="figures/fig_03.png" width="49%" alt="LSTM result plot 3"></a>
-<a href="figures/fig_04.png"><img src="figures/fig_04.png" width="49%" alt="LSTM result plot 4"></a>
 
 ### Tests on the fault recordings
 

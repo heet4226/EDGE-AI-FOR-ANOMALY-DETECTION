@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+﻿#!/usr/bin/env python3
 """
 Build the clickable, animated visuals shown in this project's README.
 
@@ -362,7 +362,7 @@ def model_readme(m):
         L += [f'<a href="architecture/{p.name}"><img src="architecture/{p.name}" width="{"100%" if (lambda wh: wh[0] / wh[1] > 1.3)(png_size(p)) else "49%"}" alt="{m["name"]} architecture {k+1}"></a>' for k, p in enumerate(arch)] + [""]
     if figs:
         L += ["### Results from the notebook", "",
-              "<sub>Cross-validation and training plots, and the notebook's manual test on one example recording (named in the plot title).</sub>", ""]
+              "<sub>Cross-validation and training plots from the notebook.</sub>", ""]
         L += [f'<a href="figures/{p.name}"><img src="figures/{p.name}" width="49%" alt="{m["name"]} result plot {k+1}"></a>' for k, p in enumerate(figs[:24])]
         if len(figs) > 24:
             L += ["", f"<details><summary>More plots ({len(figs) - 24})</summary>", ""]
